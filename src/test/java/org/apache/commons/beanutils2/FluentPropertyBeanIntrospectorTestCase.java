@@ -16,19 +16,23 @@
  */
 package org.apache.commons.beanutils2;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code FluentPropertyBeanIntrospector}.
- *
  */
-public class FluentPropertyBeanIntrospectorTestCase extends TestCase {
+public class FluentPropertyBeanIntrospectorTestCase {
     public static final class CapsBean {
         private URI mURI;
 
@@ -63,42 +67,40 @@ public class FluentPropertyBeanIntrospectorTestCase extends TestCase {
      * @return the descriptor from the map
      */
     private static PropertyDescriptor fetchDescriptor(final Map<String, PropertyDescriptor> props, final String name) {
-        assertTrue("Property not found: " + name, props.containsKey(name));
+        assertTrue(props.containsKey(name), "Property not found: " + name);
         return props.get(name);
     }
 
     /**
      * Tries to create an instance without a prefix for write methods.
      */
+    @Test
     public void testInitNoPrefix() {
-        try {
-            new FluentPropertyBeanIntrospector(null);
-            fail("Missing prefix for write methods not detected!");
-        } catch (final IllegalArgumentException iex) {
-            // ok
-        }
+        assertThrows(NullPointerException.class, () -> new FluentPropertyBeanIntrospector(null));
     }
 
     /**
      * Tests whether correct property descriptors are detected.
      */
+    @Test
     public void testIntrospection() throws IntrospectionException {
         final PropertyUtilsBean pu = new PropertyUtilsBean();
         final FluentPropertyBeanIntrospector introspector = new FluentPropertyBeanIntrospector();
         pu.addBeanIntrospector(introspector);
         final Map<String, PropertyDescriptor> props = createDescriptorMap(pu.getPropertyDescriptors(FluentIntrospectionTestBean.class));
         PropertyDescriptor pd = fetchDescriptor(props, "name");
-        assertNotNull("No read method for name", pd.getReadMethod());
-        assertNotNull("No write method for name", pd.getWriteMethod());
+        assertNotNull(pd.getReadMethod(), "No read method for name");
+        assertNotNull(pd.getWriteMethod(), "No write method for name");
         fetchDescriptor(props, "stringProperty");
         pd = fetchDescriptor(props, "fluentProperty");
-        assertNull("Read method for fluentProperty", pd.getReadMethod());
-        assertNotNull("No write method for fluentProperty", pd.getWriteMethod());
+        assertNull(pd.getReadMethod(), "Read method for fluentProperty");
+        assertNotNull(pd.getWriteMethod(), "No write method for fluentProperty");
         pd = fetchDescriptor(props, "fluentGetProperty");
-        assertNotNull("No read method for fluentGetProperty", pd.getReadMethod());
-        assertNotNull("No write method for fluentGetProperty", pd.getWriteMethod());
+        assertNotNull(pd.getReadMethod(), "No read method for fluentGetProperty");
+        assertNotNull(pd.getWriteMethod(), "No write method for fluentGetProperty");
     }
 
+    @Test
     public void testIntrospectionCaps() throws Exception {
         final PropertyUtilsBean pu = new PropertyUtilsBean();
 
@@ -110,11 +112,11 @@ public class FluentPropertyBeanIntrospectorTestCase extends TestCase {
 
         final PropertyDescriptor aDescriptor = fetchDescriptor(props, "URI");
 
-        assertNotNull("missing property", aDescriptor);
+        assertNotNull(aDescriptor, "missing property");
 
-        assertNotNull("No read method for uri", aDescriptor.getReadMethod());
-        assertNotNull("No write method for uri", aDescriptor.getWriteMethod());
+        assertNotNull(aDescriptor.getReadMethod(), "No read method for uri");
+        assertNotNull(aDescriptor.getWriteMethod(), "No write method for uri");
 
-        assertNull("Should not find mis-capitalized property", props.get("uRI"));
+        assertNull(props.get("uRI"), "Should not find mis-capitalized property");
     }
 }

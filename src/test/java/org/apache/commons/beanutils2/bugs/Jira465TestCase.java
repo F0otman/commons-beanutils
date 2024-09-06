@@ -16,20 +16,22 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.beanutils2.BeanUtils;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  * Indexed List Setters no longer work.
  *
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-465">https://issues.apache.org/jira/browse/BEANUTILS-465</a>
  */
-public class Jira465TestCase extends TestCase {
+public class Jira465TestCase {
     public static class ArrayIndexedProp {
         private final Object[] foo = { OLD_VALUE };
 
@@ -91,36 +93,38 @@ public class Jira465TestCase extends TestCase {
      * Changes the value of the test property.
      *
      * @param bean the bean to be updated
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
      */
-    private static void changeValue(final Object bean) {
-        try {
-            BeanUtils.setProperty(bean, PATH, NEW_VALUE);
-        } catch (final Exception e) {
-            fail("Could not set property: " + e);
-        }
+    private static void changeValue(final Object bean) throws IllegalAccessException, InvocationTargetException {
+        BeanUtils.setProperty(bean, PATH, NEW_VALUE);
     }
 
-    public void testArrayIndexedProperty() {
+    @Test
+    public void testArrayIndexedProperty() throws Exception {
         final ArrayIndexedProp bean = new ArrayIndexedProp();
         changeValue(bean);
-        assertEquals("Wrong value", NEW_VALUE, bean.getFoo(0));
+        assertEquals(NEW_VALUE, bean.getFoo(0), "Wrong value");
     }
 
-    public void testArrayProperty() {
+    @Test
+    public void testArrayProperty() throws Exception {
         final ArrayProp bean = new ArrayProp();
         changeValue(bean);
-        assertEquals("Wrong value", NEW_VALUE, bean.getFoo()[0]);
+        assertEquals(NEW_VALUE, bean.getFoo()[0], "Wrong value");
     }
 
-    public void testListIndexedProperty() {
+    @Test
+    public void testListIndexedProperty() throws Exception {
         final ListIndexedProp bean = new ListIndexedProp();
         changeValue(bean);
-        assertEquals("Wrong value", NEW_VALUE, bean.getFoo(0));
+        assertEquals(NEW_VALUE, bean.getFoo(0), "Wrong value");
     }
 
-    public void testListProperty() {
+    @Test
+    public void testListProperty() throws Exception {
         final ListProp bean = new ListProp();
         changeValue(bean);
-        assertEquals("Wrong value", NEW_VALUE, bean.getFoo().get(0));
+        assertEquals(NEW_VALUE, bean.getFoo().get(0), "Wrong value");
     }
 }

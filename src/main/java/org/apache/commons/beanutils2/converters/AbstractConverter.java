@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.apache.commons.beanutils2.BeanUtils;
 import org.apache.commons.beanutils2.ConversionException;
 import org.apache.commons.beanutils2.ConvertUtils;
 import org.apache.commons.beanutils2.Converter;
@@ -117,14 +116,14 @@ public abstract class AbstractConverter<D> implements Converter<D> {
     private D defaultValue;
 
     /**
-     * Constructs a <i>Converter</i> that throws a
+     * Constructs a <em>Converter</em> that throws a
      * {@code ConversionException} if an error occurs.
      */
     public AbstractConverter() {
     }
 
     /**
-     * Constructs a <i>Converter</i> that returns a default
+     * Constructs a <em>Converter</em> that returns a default
      * value if an error occurs.
      *
      * @param defaultValue The default value to be returned
@@ -259,7 +258,7 @@ public abstract class AbstractConverter<D> implements Converter<D> {
      * <p>
      * <b>N.B.</b>This implementation simply uses the value's
      * {@code toString()} method and should be overridden if a
-     * more sophisticated mechanism for <i>conversion to a String</i>
+     * more sophisticated mechanism for <em>conversion to a String</em>
      * is required.
      * </p>
      *
@@ -330,14 +329,12 @@ public abstract class AbstractConverter<D> implements Converter<D> {
                 log().debug("    Conversion threw " + cause);
             }
         }
-
         if (useDefault) {
             return handleMissing(type);
         }
-
         ConversionException cex = null;
         if (cause instanceof ConversionException) {
-            cex = (ConversionException)cause;
+            cex = (ConversionException) cause;
             if (log().isDebugEnabled()) {
                 log().debug("    Re-throwing ConversionException: " + cex.getMessage());
                 log().debug("    " + DEFAULT_CONFIG_MSG);
@@ -350,11 +347,8 @@ public abstract class AbstractConverter<D> implements Converter<D> {
                 log().debug("    Throwing ConversionException: " + msg);
                 log().debug("    " + DEFAULT_CONFIG_MSG);
             }
-            BeanUtils.initCause(cex, cause);
         }
-
         throw cex;
-
     }
 
     /**

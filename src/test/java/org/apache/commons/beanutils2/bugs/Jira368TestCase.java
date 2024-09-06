@@ -16,52 +16,25 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
-import org.apache.commons.beanutils2.BeanUtils;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.commons.beanutils2.BeanUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-368">https://issues.apache.org/jira/browse/BEANUTILS-368</a>
  */
-public class Jira368TestCase extends TestCase {
-
-    /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira368TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira368TestCase(final String name) {
-        super(name);
-    }
+public class Jira368TestCase {
 
     /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -69,23 +42,15 @@ public class Jira368TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Test {@link BeanUtils} setProperty() with Null value
      */
+    @Test
     public void testBeanUtilsSetProperty_NullBean() throws Exception {
-        try {
-            BeanUtils.setProperty(null, "foo", "bar");
-        } catch (final NullPointerException e) {
-            fail("Threw NullPointerException");
-        } catch (final IllegalArgumentException e) {
-            // expected result
-        } catch (final Exception e) {
-            fail("Threw " + e);
-        }
+        assertThrows(NullPointerException.class, () -> BeanUtils.setProperty(null, "foo", "bar"));
     }
 }

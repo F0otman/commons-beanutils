@@ -16,14 +16,15 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.apache.commons.beanutils2.PropertyUtils;
 import org.apache.commons.beanutils2.bugs.other.Jira87BeanFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for Jiar issue# BEANUTILS-87.
@@ -37,45 +38,17 @@ import junit.framework.TestSuite;
  *
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-87">https://issues.apache.org/jira/browse/BEANUTILS-87</a>
  */
-public class Jira87TestCase extends TestCase {
+public class Jira87TestCase {
 
     private static final Log LOG = LogFactory.getLog(Jira87TestCase.class);
-
-    /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira87TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira87TestCase(final String name) {
-        super(name);
-    }
 
     /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -83,23 +56,18 @@ public class Jira87TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Interface definition with a mapped property
      */
-    public void testJira87() {
+    @Test
+    public void testJira87() throws Exception {
 
         final Jira87BeanFactory.PublicMappedInterface bean = Jira87BeanFactory.createMappedPropertyBean();
-        try {
-            // N.B. The test impl. returns the key value
-            assertEquals("foo", PropertyUtils.getMappedProperty(bean, "value(foo)"));
-        } catch (final Throwable t) {
-            LOG.error("ERROR " + t, t);
-            fail("Threw exception: " + t);
-        }
+        // N.B. The test impl. returns the key value
+        assertEquals("foo", PropertyUtils.getMappedProperty(bean, "value(foo)"));
     }
 }

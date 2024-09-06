@@ -92,8 +92,11 @@ public class BeanComparator<T, V> implements Comparator<T>, Serializable {
         }
     }
     private static final long serialVersionUID = 1L;
+
+    /** Property. */
     private String property;
 
+    /** Comparator, untyped. */
     private final Comparator<V> comparator;
 
     /**
@@ -195,11 +198,8 @@ public class BeanComparator<T, V> implements Comparator<T>, Serializable {
         if (property == null) {
             return beanComparator.property == null;
         }
-        if (!property.equals(beanComparator.property)) {
-            return false;
-        }
 
-        return true;
+        return property.equals(beanComparator.property);
     }
 
     /**

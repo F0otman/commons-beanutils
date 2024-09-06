@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.beanutils2.DynaBean;
 import org.apache.commons.beanutils2.DynaClass;
@@ -131,7 +132,7 @@ abstract class AbstractJdbcDynaClass implements DynaClass, Serializable {
      * Gets the table column name for the specified property name.
      *
      * @param name The property name
-     * @return The column name (which can be different if the <i>lowerCase</i> option is used).
+     * @return The column name (which can be different if the <em>lowerCase</em> option is used).
      */
     protected String getColumnName(final String name) {
         if (columnNameXref != null && columnNameXref.containsKey(name)) {
@@ -142,7 +143,7 @@ abstract class AbstractJdbcDynaClass implements DynaClass, Serializable {
 
     /**
      * <p>
-     * Return an array of {@code PropertyDescriptor} for the properties currently defined in this DynaClass. If no properties are defined, a zero-length array
+     * Gets an array of {@code PropertyDescriptor} for the properties currently defined in this DynaClass. If no properties are defined, a zero-length array
      * will be returned.
      * </p>
      */
@@ -153,7 +154,7 @@ abstract class AbstractJdbcDynaClass implements DynaClass, Serializable {
 
     /**
      * <p>
-     * Return a property descriptor for the specified property, if it exists; otherwise, return {@code null}.
+     * Gets a property descriptor for the specified property, if it exists; otherwise, return {@code null}.
      * </p>
      *
      * @param name Name of the dynamic property for which a descriptor is requested
@@ -162,16 +163,13 @@ abstract class AbstractJdbcDynaClass implements DynaClass, Serializable {
      */
     @Override
     public DynaProperty getDynaProperty(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("No property name specified");
-        }
-        return propertiesMap.get(name);
+        return propertiesMap.get(Objects.requireNonNull(name, "name"));
 
     }
 
     /**
      * <p>
-     * Return the name of this DynaClass (analogous to the {@code getName()</code> method of <code>java.lang.Class}, which allows the same {@code DynaClass}
+     * Gets the name of this DynaClass (analogous to the {@code getName()</code> method of <code>java.lang.Class}, which allows the same {@code DynaClass}
      * implementation class to support different dynamic classes, with different sets of properties.
      * </p>
      */

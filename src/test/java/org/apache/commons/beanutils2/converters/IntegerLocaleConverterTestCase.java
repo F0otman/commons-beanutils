@@ -17,21 +17,22 @@
 
 package org.apache.commons.beanutils2.converters;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.apache.commons.beanutils2.locale.converters.IntegerLocaleConverter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Case for the IntegerLocaleConverter class.
  */
-public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<Integer> {
-
-    public IntegerLocaleConverterTestCase(final String name) {
-        super(name);
-    }
+public class IntegerLocaleConverterTestCase extends AbstractLocaleConverterTestCase<Integer> {
 
     /**
      * Sets up instance variables required by this test case.
      */
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         defaultValue = Integer.valueOf("999");
@@ -39,21 +40,13 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     }
 
     /**
-     * Tear down instance variables required by this test case.
-     */
-    @Override
-    public void tearDown() {
-        super.tearDown();
-    }
-
-    /**
      * Test Converter() constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_2() {
-        // ------------- Construct using default locale ------------
+        // Construct using default locale
         converter = IntegerLocaleConverter.builder().get();
 
         // Perform Tests
@@ -67,10 +60,10 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
      * Test Converter(locPattern) constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_3() {
-        // ------------- Construct using localized pattern (default locale) --------
+        // Construct using localized pattern (default locale)
         converter = IntegerLocaleConverter.builder().setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -83,8 +76,9 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converter(Locale) constructor
      */
+    @Test
     public void testConstructor_4() {
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = IntegerLocaleConverter.builder().setLocale(localizedLocale).get();
 
         // Perform Tests
@@ -97,8 +91,9 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converter(Locale, locPattern) constructor
      */
+    @Test
     public void testConstructor_5() {
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = IntegerLocaleConverter.builder().setLocale(localizedLocale).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -111,8 +106,9 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converter(Locale, pattern) constructor
      */
+    @Test
     public void testConstructor_6() {
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = IntegerLocaleConverter.builder().setLocale(localizedLocale).setPattern(defaultIntegerPattern).get();
 
         // Perform Tests
@@ -125,8 +121,9 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converter(Locale, pattern, locPattern) constructor
      */
+    @Test
     public void testConstructor_7() {
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = IntegerLocaleConverter.builder().setLocale(localizedLocale).setPattern(localizedIntegerPattern).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -139,8 +136,9 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converter(defaultValue) constructor
      */
+    @Test
     public void testConstructor_8() {
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = IntegerLocaleConverter.builder().setDefault(defaultValue).get();
 
         // Perform Tests
@@ -153,8 +151,9 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converter(defaultValue, locPattern) constructor
      */
+    @Test
     public void testConstructor_9() {
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = IntegerLocaleConverter.builder().setDefault(defaultValue).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -167,9 +166,10 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converter(defaultValue, locale, pattern, localizedPattern) constructor
      */
+    @Test
     public void testConstructorMain() {
 
-        // ------------- Construct with localized pattern ------------
+        // Construct with localized pattern
         converter = IntegerLocaleConverter.builder().setDefault(defaultValue).setLocale(localizedLocale).setPattern(localizedIntegerPattern)
                 .setLocalizedPattern(true).get();
 
@@ -203,7 +203,7 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
         // **************************************************************************
         // convertValueToType(converter, "(B)", Double.class, localizedIntegerValue, localizedIntegerPattern, expectedValue);
 
-        // ------------- Construct with non-localized pattern ------------
+        // Construct with non-localized pattern
         converter = IntegerLocaleConverter.builder().setDefault(defaultValue).setLocale(localizedLocale).setPattern(defaultIntegerPattern)
                 .setLocalizedPattern(false).get();
 
@@ -216,23 +216,25 @@ public class IntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<
     /**
      * Test Converting a number
      */
+    @Test
     public void testNumber() {
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = IntegerLocaleConverter.builder().setLocale(localizedLocale).get();
 
         final Integer value = Integer.valueOf(1234);
-        assertEquals("Convert Integer", value, converter.convert(value));
-        assertEquals("Convert Long", value, converter.convert(Long.valueOf(value.intValue())));
+        assertEquals(value, converter.convert(value), "Convert Integer");
+        assertEquals(value, converter.convert(Long.valueOf(value.intValue())), "Convert Long");
     }
 
     /**
      * Tests whether a conversion to a primitive type can be performed.
      */
+    @Test
     public void testToPrimitiveType() {
         converter = IntegerLocaleConverter.builder().get();
         final Integer value = 20131028;
         final Class<Integer> target = Integer.TYPE;
         final int result = converter.convert(target, (Object) value.toString());
-        assertEquals("Wrong result", value.intValue(), result);
+        assertEquals(value.intValue(), result, "Wrong result");
     }
 }

@@ -17,31 +17,25 @@
 
 package org.apache.commons.beanutils2.converters;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.beanutils2.ConversionException;
 import org.apache.commons.beanutils2.Converter;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test Case for the UUIDConverter class.
- *
+ * Test Case for the PathConverter class.
  */
-public class PathConverterTestCase extends TestCase {
-
-    public static TestSuite suite() {
-        return new TestSuite(PathConverterTestCase.class);
-    }
+public class PathConverterTestCase {
 
     private Converter<Path> converter;
-
-    public PathConverterTestCase(final String name) {
-        super(name);
-    }
 
     protected Class<?> getExpectedType() {
         return Path.class;
@@ -51,16 +45,17 @@ public class PathConverterTestCase extends TestCase {
         return new PathConverter();
     }
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         converter = makeConverter();
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         converter = null;
     }
 
+    @Test
     public void testSimpleConversion() throws Exception {
         final String[] message = { "from String", "from String", "from String", "from String", "from String", "from String", "from String", "from String", };
 
@@ -72,24 +67,20 @@ public class PathConverterTestCase extends TestCase {
         final Path[] expected = { Paths.get(separator + "foo" + separator + "bar" + separator + "baz"), Paths.get(separator) };
 
         for (int i = 0; i < expected.length; i++) {
-            assertEquals(message[i] + " to URI", expected[i], converter.convert(Path.class, input[i]));
-            assertEquals(message[i] + " to null type", expected[i], converter.convert(null, input[i]));
+            assertEquals(expected[i], converter.convert(Path.class, input[i]), message[i] + " to URI");
+            assertEquals(expected[i], converter.convert(null, input[i]), message[i] + " to null type");
         }
 
         for (int i = 0; i < expected.length; i++) {
-            assertEquals(input[i] + " to String", input[i], converter.convert(String.class, expected[i]));
+            assertEquals(input[i], converter.convert(String.class, expected[i]), input[i] + " to String");
         }
     }
 
     /**
      * Tests a conversion to an unsupported type.
      */
+    @Test
     public void testUnsupportedType() {
-        try {
-            converter.convert(Integer.class, "http://www.apache.org");
-            fail("Unsupported type could be converted!");
-        } catch (final ConversionException cex) {
-            // expected result
-        }
+        assertThrows(ConversionException.class, () -> converter.convert(Integer.class, "http://www.apache.org"));
     }
 }

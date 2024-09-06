@@ -27,7 +27,6 @@ import java.util.Locale;
  * <p>The implementations for these method are provided by {@link LocaleConvertUtilsBean}.
  * These static utility method use the default instance. More sophisticated can be provided
  * by using a {@code LocaleConvertUtilsBean} instance.</p>
- *
  */
 public class LocaleConvertUtils {
 
@@ -224,8 +223,8 @@ public static void deregister(final Locale locale) {
     }
 
     /**
-     * <p>Gets the {@code Locale} which will be used when
-     * no {@code Locale} is passed to a method.</p>
+     * <p>Gets the {@link Locale} which will be used when
+     * no {@link Locale} is passed to a method.</p>
      *
      * <p>For more details see {@code LocaleConvertUtilsBean}</p>
      * @return the default locale
@@ -283,8 +282,8 @@ public static void deregister(final Locale locale) {
     }
 
     /**
-     * <p>Sets the {@code Locale} which will be used when
-     * no {@code Locale} is passed to a method.</p>
+     * <p>Sets the {@link Locale} which will be used when
+     * no {@link Locale} is passed to a method.</p>
      *
      * <p>For more details see {@code LocaleConvertUtilsBean}</p>
      *

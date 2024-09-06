@@ -17,42 +17,34 @@
 
 package org.apache.commons.beanutils2.converters;
 
-import org.apache.commons.beanutils2.ConversionException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import junit.framework.TestCase;
+import org.apache.commons.beanutils2.ConversionException;
+import org.junit.jupiter.api.Test;
 
 /**
  */
-public class BooleanConverterTestCase extends TestCase {
+public class BooleanConverterTestCase {
 
     public static final String[] STANDARD_TRUES = { "yes", "y", "true", "on", "1" };
 
     public static final String[] STANDARD_FALSES = { "no", "n", "false", "off", "0" };
 
-    public BooleanConverterTestCase(final String name) {
-        super(name);
-    }
-
+    @Test
     public void testAdditionalStrings() {
         final String[] trueStrings = { "sure" };
         final String[] falseStrings = { "nope" };
         final AbstractConverter<Boolean> converter = new BooleanConverter(trueStrings, falseStrings);
         testConversionValues(converter, new String[] { "sure", "Sure" }, new String[] { "nope", "nOpE" });
 
-        try {
-            converter.convert(Boolean.class, "true");
-            fail("Converting obsolete true value should have generated an exception");
-        } catch (final ConversionException expected) {
-            // Exception is successful test
-        }
-        try {
-            converter.convert(Boolean.class, "bogus");
-            fail("Converting invalid string should have generated an exception");
-        } catch (final ConversionException expected) {
-            // Exception is successful test
-        }
+        assertThrows(ConversionException.class, () -> converter.convert(Boolean.class, "true"));
+        assertThrows(ConversionException.class, () -> converter.convert(Boolean.class, "bogus"));
     }
 
+    @Test
     public void testCaseInsensitivity() {
         final AbstractConverter<Boolean> converter = new BooleanConverter();
         testConversionValues(converter, new String[] { "Yes", "TRUE" }, new String[] { "NO", "fAlSe" });
@@ -61,14 +53,10 @@ public class BooleanConverterTestCase extends TestCase {
     /**
      * Tests a conversion to another target type. This should not be possible.
      */
+    @Test
     public void testConversionToOtherType() {
         final AbstractConverter<Boolean> converter = new BooleanConverter();
-        try {
-            converter.convert(Integer.class, STANDARD_TRUES[0]);
-            fail("Could convert to unsupported type!");
-        } catch (final ConversionException cex) {
-            // Expected result
-        }
+        assertThrows(ConversionException.class, () -> converter.convert(Integer.class, STANDARD_TRUES[0]));
     }
 
     protected void testConversionValues(final AbstractConverter<Boolean> converter, final String[] trueValues, final String[] falseValues) {
@@ -81,6 +69,7 @@ public class BooleanConverterTestCase extends TestCase {
         }
     }
 
+    @Test
     public void testDefaultValue() {
         final Boolean defaultValue = Boolean.TRUE;
         final AbstractConverter<Boolean> converter = new BooleanConverter(defaultValue);
@@ -89,24 +78,22 @@ public class BooleanConverterTestCase extends TestCase {
         testConversionValues(converter, STANDARD_TRUES, STANDARD_FALSES);
     }
 
+    @Test
     public void testInvalidString() {
         final AbstractConverter<Boolean> converter = new BooleanConverter();
-        try {
-            converter.convert(Boolean.class, "bogus");
-            fail("Converting invalid string should have generated an exception");
-        } catch (final ConversionException expected) {
-            // Exception is successful test
-        }
+        assertThrows(ConversionException.class, () -> converter.convert(Boolean.class, "bogus"));
     }
 
     /**
      * Tests whether a conversion to a primitive boolean is possible.
      */
+    @Test
     public void testPrimitiveTargetClass() {
         final AbstractConverter<Boolean> converter = new BooleanConverter();
-        assertTrue("Wrong result", converter.convert(Boolean.TYPE, STANDARD_TRUES[0]));
+        assertTrue(converter.convert(Boolean.TYPE, STANDARD_TRUES[0]), "Wrong result");
     }
 
+    @Test
     public void testStandardValues() {
         final AbstractConverter<Boolean> converter = new BooleanConverter();
         testConversionValues(converter, STANDARD_TRUES, STANDARD_FALSES);

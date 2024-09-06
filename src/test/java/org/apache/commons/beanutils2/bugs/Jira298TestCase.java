@@ -16,6 +16,8 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.lang.reflect.Method;
 
 import org.apache.commons.beanutils2.MethodUtils;
@@ -24,53 +26,24 @@ import org.apache.commons.beanutils2.bugs.other.Jira298BeanFactory;
 import org.apache.commons.beanutils2.bugs.other.Jira298BeanFactory.IX;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-298">https://issues.apache.org/jira/browse/BEANUTILS-298</a>
  */
-public class Jira298TestCase extends TestCase {
+public class Jira298TestCase {
 
     private static final Log LOG = LogFactory.getLog(Jira298TestCase.class);
-
-    /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira298TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira298TestCase(final String name) {
-        super(name);
-    }
 
     /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -78,54 +51,40 @@ public class Jira298TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Test {@link MethodUtils#getAccessibleMethod(Class, Method)}
      */
-    public void testIssue_BEANUTILS_298_MethodUtils_getAccessibleMethod() {
+    @Test
+    public void testIssue_BEANUTILS_298_MethodUtils_getAccessibleMethod() throws Exception {
         final Object bean = Jira298BeanFactory.createImplX();
         Object result = null;
-        try {
-            final Method m2 = MethodUtils.getAccessibleMethod(bean.getClass(), "getName", new Class[0]);
-            result = m2.invoke(bean);
-        } catch (final Throwable t) {
-            LOG.error("Failed: " + t.getMessage(), t);
-            fail("Threw exception: " + t);
-        }
+        final Method m2 = MethodUtils.getAccessibleMethod(bean.getClass(), "getName", new Class[0]);
+        result = m2.invoke(bean);
         assertEquals("BaseX name value", result);
     }
 
     /**
      * Test {@link PropertyUtils#getProperty(Object, String)}
      */
-    public void testIssue_BEANUTILS_298_PropertyUtils_getProperty() {
+    @Test
+    public void testIssue_BEANUTILS_298_PropertyUtils_getProperty() throws Exception {
         final Object bean = Jira298BeanFactory.createImplX();
-        Object result = null;
-        try {
-            result = PropertyUtils.getProperty(bean, "name");
-        } catch (final Throwable t) {
-            LOG.error("Failed: " + t.getMessage(), t);
-            fail("Threw exception: " + t);
-        }
+        Object result = PropertyUtils.getProperty(bean, "name");
         assertEquals("BaseX name value", result);
     }
 
     /**
      * Test {@link PropertyUtils#setProperty(Object, String, Object)}
      */
-    public void testIssue_BEANUTILS_298_PropertyUtils_setProperty() {
+    @Test
+    public void testIssue_BEANUTILS_298_PropertyUtils_setProperty() throws Exception {
         final Object bean = Jira298BeanFactory.createImplX();
         assertEquals("BaseX name value", ((IX) bean).getName());
-        try {
-            PropertyUtils.setProperty(bean, "name", "new name");
-        } catch (final Throwable t) {
-            LOG.error("Failed: " + t.getMessage(), t);
-            fail("Threw exception: " + t);
-        }
+        PropertyUtils.setProperty(bean, "name", "new name");
         assertEquals("new name", ((IX) bean).getName());
     }
 }

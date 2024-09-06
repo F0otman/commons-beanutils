@@ -16,30 +16,27 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.apache.commons.beanutils2.AlphaBean;
 import org.apache.commons.beanutils2.BeanUtilsBean;
 import org.apache.commons.beanutils2.SuppressPropertiesBeanIntrospector;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class loader vulnerability in DefaultResolver
  *
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-463">https://issues.apache.org/jira/browse/BEANUTILS-463</a>
  */
-public class Jira463TestCase extends TestCase {
+public class Jira463TestCase {
     /**
      * Tests that with a specialized {@code BeanIntrospector} implementation the class property can be suppressed.
      */
+    @Test
     public void testSuppressClassProperty() throws Exception {
         final BeanUtilsBean bub = new BeanUtilsBean();
         bub.getPropertyUtils().addBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
         final AlphaBean bean = new AlphaBean();
-        try {
-            bub.getProperty(bean, "class");
-            fail("Could access class property!");
-        } catch (final NoSuchMethodException ex) {
-            // ok
-        }
+        assertThrows(NoSuchMethodException.class, () -> bub.getProperty(bean, "class"));
     }
 }

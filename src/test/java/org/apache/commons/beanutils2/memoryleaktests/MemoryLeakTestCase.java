@@ -41,13 +41,12 @@ import org.apache.commons.beanutils2.locale.LocaleBeanUtilsBean;
 import org.apache.commons.beanutils2.locale.LocaleConvertUtils;
 import org.apache.commons.beanutils2.locale.converters.IntegerLocaleConverter;
 import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests BeanUtils memory leaks.
  *
  * See https://issues.apache.org/jira/browse/BEANUTILS-291
- *
  */
 public class MemoryLeakTestCase {
 
@@ -155,7 +154,7 @@ public class MemoryLeakTestCase {
     /**
      * Produces a profiler report about where the leaks are.
      *
-     * This requires JBoss's profiler be installed, see: http://labs.jboss.com/jbossprofiler/
+     * This requires JBoss's profiler be installed, see: https://labs.jboss.com/jbossprofiler/
      *
      * @param className The name of the class to profile
      */

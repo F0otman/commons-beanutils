@@ -25,23 +25,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>DynaBean which automatically adds properties to the {@code DynaClass}
- *   and provides <i>Lazy List</i> and <i>Lazy Map</i> features.</p>
+ *   and provides <em>Lazy List</em> and <em>Lazy Map</em> features.</p>
  *
- * <p>DynaBeans deal with three types of properties - <i>simple</i>, <i>indexed</i> and <i>mapped</i> and
+ * <p>DynaBeans deal with three types of properties - <em>simple</em>, <em>indexed</em> and <em>mapped</em> and
  *    have the following {@code get()</code> and <code>set()} methods for
  *    each of these types:</p>
  *    <ul>
- *        <li><i>Simple</i> property methods - {@code get(name)} and
+ *        <li><em>Simple</em> property methods - {@code get(name)} and
  *                          {@code set(name, value)}</li>
- *        <li><i>Indexed</i> property methods - {@code get(name, index)} and
+ *        <li><em>Indexed</em> property methods - {@code get(name, index)} and
  *                          {@code set(name, index, value)}</li>
- *        <li><i>Mapped</i> property methods - {@code get(name, key)} and
+ *        <li><em>Mapped</em> property methods - {@code get(name, key)} and
  *                          {@code set(name, key, value)}</li>
  *    </ul>
  *
@@ -53,40 +54,40 @@ import org.apache.commons.logging.LogFactory;
  *    <p>The {@code LazyDynaBean</code> will automatically add a property to the <code>DynaClass}
  *       if it doesn't exist when the {@code set(name, value)} method is called.</p>
  *
- *     <pre><code>
+ *     <pre>{@code
  *         DynaBean myBean = new LazyDynaBean();
  *         myBean.set("myProperty", "myValue");
- *     </code></pre>
+ *     }</pre>
  *
  * <p><b><u>Setting Indexed Properties</u></b></p>
  *    <p>If the property <b>doesn't</b> exist, the {@code LazyDynaBean} will automatically add
  *       a property with an {@code ArrayList</code> type to the <code>DynaClass} when
  *       the {@code set(name, index, value)} method is called.
- *       It will also instantiate a new {@code ArrayList} and automatically <i>grow</i>
+ *       It will also instantiate a new {@code ArrayList} and automatically <em>grow</em>
  *       the {@code List} so that it is big enough to accommodate the index being set.
  *       {@code ArrayList} is the default indexed property that LazyDynaBean uses but
  *       this can be easily changed by overriding the {@code defaultIndexedProperty(name)}
  *       method.</p>
  *
- *     <pre><code>
+ *     <pre>{@code
  *         DynaBean myBean = new LazyDynaBean();
  *         myBean.set("myIndexedProperty", 0, "myValue1");
  *         myBean.set("myIndexedProperty", 1, "myValue2");
- *     </code></pre>
+ *     }</pre>
  *
  *    <p>If the indexed property <b>does</b> exist in the {@code DynaClass} but is set to
  *      {@code null</code> in the <code>LazyDynaBean}, then it will instantiate a
  *      new {@code List</code> or <code>Array} as specified by the property's type
- *      in the {@code DynaClass</code> and automatically <i>grow</i> the <code>List}
+ *      in the {@code DynaClass</code> and automatically <em>grow</em> the <code>List}
  *      or {@code Array} so that it is big enough to accommodate the index being set.</p>
  *
- *     <pre><code>
+ *     <pre>{@code
  *         DynaBean myBean = new LazyDynaBean();
  *         MutableDynaClass myClass = (MutableDynaClass)myBean.getDynaClass();
  *         myClass.add("myIndexedProperty", int[].class);
  *         myBean.set("myIndexedProperty", 0, Integer.valueOf(10));
  *         myBean.set("myIndexedProperty", 1, Integer.valueOf(20));
- *     </code></pre>
+ *     }</pre>
  *
  * <p><b><u>Setting Mapped Properties</u></b></p>
  *    <p>If the property <b>doesn't</b> exist, the {@code LazyDynaBean} will automatically add
@@ -96,24 +97,24 @@ import org.apache.commons.logging.LogFactory;
  *       mapped property that LazyDynaBean uses but this can be easily changed by overriding
  *       the {@code defaultMappedProperty(name)} method.</p>
  *
- *     <pre><code>
+ *     <pre>{@code
  *         DynaBean myBean = new LazyDynaBean();
  *         myBean.set("myMappedProperty", "myKey", "myValue");
- *     </code></pre>
+ *     }</pre>
  *
  *    <p>If the mapped property <b>does</b> exist in the {@code DynaClass} but is set to
  *      {@code null</code> in the <code>LazyDynaBean}, then it will instantiate a
  *      new {@code Map</code> as specified by the property's type in the <code>DynaClass}.</p>
  *
- *     <pre><code>
+ *     <pre>{@code
  *         DynaBean myBean = new LazyDynaBean();
  *         MutableDynaClass myClass = (MutableDynaClass)myBean.getDynaClass();
  *         myClass.add("myMappedProperty", TreeMap.class);
  *         myBean.set("myMappedProperty", "myKey", "myValue");
- *     </code></pre>
+ *     }</pre>
  *
- * <p><b><u><i>Restricted</i> DynaClass</u></b></p>
- *    <p>{@code MutableDynaClass</code> have a facility to <i>restrict</i> the <code>DynaClass}
+ * <p><b><u><em>Restricted</em> DynaClass</u></b></p>
+ *    <p>{@code MutableDynaClass</code> have a facility to <em>restrict</em> the <code>DynaClass}
  *       so that its properties cannot be modified. If the {@code MutableDynaClass} is
  *       restricted then calling any of the {@code set()} methods for a property which
  *       doesn't exist will result in a {@code IllegalArgumentException} being thrown.</p>
@@ -211,10 +212,7 @@ public class LazyDynaBean implements DynaBean, Serializable {
      */
     @Override
     public boolean contains(final String name, final String key) {
-        if (name == null) {
-            throw new IllegalArgumentException("No property name specified");
-        }
-
+        Objects.requireNonNull(name, "name");
         final Object value = values.get(name);
         if (value == null) {
             return false;
@@ -296,7 +294,7 @@ public class LazyDynaBean implements DynaBean, Serializable {
         // Create the mapped object
         Object mappedProperty = null;
 
-        if ((type == null) || type.isInterface()) {
+        if (type == null || type.isInterface()) {
 
             mappedProperty = defaultMappedProperty(name);
 
@@ -465,10 +463,7 @@ public class LazyDynaBean implements DynaBean, Serializable {
      */
     @Override
     public Object get(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("No property name specified");
-        }
-
+        Objects.requireNonNull(name, "name");
         // Value found
         Object value = values.get(name);
         if (value != null) {
@@ -683,15 +678,11 @@ public class LazyDynaBean implements DynaBean, Serializable {
      * specified name, otherwise {@code false}
      */
     protected boolean isDynaProperty(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("No property name specified");
-        }
-
+        Objects.requireNonNull(name, "name");
         // Handle LazyDynaClasses
         if (dynaClass instanceof LazyDynaClass) {
             return ((LazyDynaClass)dynaClass).isDynaProperty(name);
         }
-
         // Handle other MutableDynaClass
         return dynaClass.getDynaProperty(name) != null;
     }
@@ -856,29 +847,23 @@ public class LazyDynaBean implements DynaBean, Serializable {
      * @throws IllegalArgumentException if the specified property
      *  exists, but is not mapped
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void set(final String name, final String key, final Object value) {
         // If the 'mapped' property doesn't exist, then add it
         if (!isDynaProperty(name)) {
             set(name, defaultMappedProperty(name));
         }
-
         // Get the mapped property
         final Object mappedProperty = get(name);
 
         // Check that the property is mapped
         if (!dynaClass.getDynaProperty(name).isMapped()) {
-            throw new IllegalArgumentException
-                ("Non-mapped property for '" + name + "(" + key + ")'"
-                            + dynaClass.getDynaProperty(name).getType().getName());
+            throw new IllegalArgumentException("Non-mapped property for '" + name + "(" + key + ")'" + dynaClass.getDynaProperty(name).getType().getName());
         }
-
         // Set the value in the Map
-        @SuppressWarnings("unchecked")
-        final
         // mapped properties are stored in a Map<String, Object>
-        Map<String, Object> valuesMap = (Map<String, Object>) mappedProperty;
-        valuesMap.put(key, value);
+        ((Map<String, Object>) mappedProperty).put(key, value);
     }
 
     /**
@@ -889,10 +874,7 @@ public class LazyDynaBean implements DynaBean, Serializable {
      * @throws IllegalArgumentException if no property name is specified
      */
     public int size(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("No property name specified");
-        }
-
+        Objects.requireNonNull(name, "name");
         final Object value = values.get(name);
         if (value == null) {
             return 0;

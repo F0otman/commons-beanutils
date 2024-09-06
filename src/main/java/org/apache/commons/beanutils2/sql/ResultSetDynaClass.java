@@ -23,10 +23,11 @@ import java.util.Iterator;
 import java.util.Objects;
 
 import org.apache.commons.beanutils2.DynaBean;
+import org.apache.commons.beanutils2.DynaClass;
 
 /**
  * <p>
- * Implementation of {@code DynaClass} for DynaBeans that wrap the {@code java.sql.Row</code> objects of a <code>java.sql.ResultSet}. The normal usage pattern
+ * Implements {@link DynaClass} for DynaBeans that wrap the {@code java.sql.Row</code> objects of a <code>java.sql.ResultSet}. The normal usage pattern
  * is something like:
  * </p>
  *
@@ -75,7 +76,6 @@ import org.apache.commons.beanutils2.DynaBean;
  *     results.add(newRow);
  *   }
  * </pre>
- *
  */
 public class ResultSetDynaClass extends AbstractJdbcDynaClass {
 
@@ -167,7 +167,7 @@ public class ResultSetDynaClass extends AbstractJdbcDynaClass {
 
     /**
      * <p>
-     * Return the result set we are wrapping.
+     * Gets the result set we are wrapping.
      * </p>
      */
     ResultSet getResultSet() {

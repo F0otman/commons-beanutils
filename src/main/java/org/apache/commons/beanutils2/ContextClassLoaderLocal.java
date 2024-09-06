@@ -69,7 +69,7 @@ import java.util.WeakHashMap;
  * a component which uses this class is "undeployed" by a container the
  * component-specific classloader and all its associated classes (and their
  * static variables) are garbage-collected. Unfortunately there is one
- * scenario in which this does <i>not</i> work correctly and there
+ * scenario in which this does <em>not</em> work correctly and there
  * is unfortunately no known workaround other than ensuring that the
  * component (or its container) calls the "unset" method on this class for
  * each instance of this class when the component is undeployed. The problem
@@ -88,7 +88,7 @@ import java.util.WeakHashMap;
  * related classes and static variables cannot be garbage-collected. This is
  * not expected to be an issue with the commons-beanutils library as the only
  * classes which use this class are BeanUtilsBean and ConvertUtilsBean and
- * there is no obvious reason for a user of the beanutils library to subclass
+ * there is no obvious reason for a user of the BeanUtils library to subclass
  * either of those classes.</p>
  *
  * <p><strong>Note:</strong> A WeakHashMap bug in several 1.3 JVMs results in
@@ -207,7 +207,7 @@ public class ContextClassLoaderLocal<T> {
 
     /**
      * Unsets the value associated with the given classloader
-     * @param classLoader The classloader to <i>unset</i> for
+     * @param classLoader The classloader to <em>unset</em> for
      */
     public synchronized void unset(final ClassLoader classLoader) {
         valueByClassLoader.remove(classLoader);

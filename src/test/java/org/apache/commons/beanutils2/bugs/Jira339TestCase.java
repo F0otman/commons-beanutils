@@ -16,6 +16,8 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,15 +26,14 @@ import org.apache.commons.beanutils2.BeanUtils;
 import org.apache.commons.beanutils2.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-339">https://issues.apache.org/jira/browse/BEANUTILS-339</a>
  */
-public class Jira339TestCase extends TestCase {
+public class Jira339TestCase {
 
     /**
      * Test Bean.
@@ -63,40 +64,12 @@ public class Jira339TestCase extends TestCase {
     private static final Log LOG = LogFactory.getLog(Jira339TestCase.class);
 
     /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira339TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira339TestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -104,40 +77,29 @@ public class Jira339TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Test {@link BeanUtils#populate(Object, Map)}
      */
-    public void testIssue_BEANUTILS_331_BeanUtilsBean_populate() {
-
+    @Test
+    public void testIssue_BEANUTILS_331_BeanUtilsBean_populate() throws Exception {
         final TestBean bean = new TestBean();
-        try {
-            final Map<String, Object> properties = new HashMap<>();
-            properties.put("comparator", null);
-            BeanUtils.populate(bean, properties);
-        } catch (final Throwable t) {
-            LOG.error("Failed: " + t.getMessage(), t);
-            fail("Threw exception: " + t);
-        }
-        assertNull("TestBean comparator should be null", bean.getComparator());
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("comparator", null);
+        BeanUtils.populate(bean, properties);
+        assertNull(bean.getComparator(), "TestBean comparator should be null");
     }
 
     /**
      * Test {@link PropertyUtils#setProperty(Object, String, Object)}
      */
-    public void testIssue_BEANUTILS_339_BeanUtilsBean_setProperty() {
-
+    @Test
+    public void testIssue_BEANUTILS_339_BeanUtilsBean_setProperty() throws Exception {
         final TestBean bean = new TestBean();
-        try {
-            BeanUtils.setProperty(bean, "comparator", null);
-        } catch (final Throwable t) {
-            LOG.error("Failed: " + t.getMessage(), t);
-            fail("Threw exception: " + t);
-        }
-        assertNull("TestBean comparator should be null", bean.getComparator());
+        BeanUtils.setProperty(bean, "comparator", null);
+        assertNull(bean.getComparator(), "TestBean comparator should be null");
     }
 }

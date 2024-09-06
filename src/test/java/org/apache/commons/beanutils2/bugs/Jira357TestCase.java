@@ -16,18 +16,20 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.beans.PropertyDescriptor;
 
 import org.apache.commons.beanutils2.PropertyUtils;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-357">https://issues.apache.org/jira/browse/BEANUTILS-357</a>
  */
-public class Jira357TestCase extends TestCase {
+public class Jira357TestCase {
 
     /**
      * Abstract test bean.
@@ -98,49 +100,17 @@ public class Jira357TestCase extends TestCase {
     }
 
     /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira357TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira357TestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Test {@link PropertyUtils#getPropertyDescriptors(Class)}
      */
     private void checkReadMethod(final String propertyName, final Class<?> expectedDeclaringClass) throws Exception {
 
         PropertyDescriptor[] descriptors = null;
-        try {
-            descriptors = PropertyUtils.getPropertyDescriptors(ConcreteTestBean.class);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            fail("Threw: " + e);
-        }
+        descriptors = PropertyUtils.getPropertyDescriptors(ConcreteTestBean.class);
 
         // Test InnerClassProperty
         final PropertyDescriptor descriptor = findDescriptor(propertyName, descriptors);
-        assertNotNull(propertyName + "descriptor", descriptor);
-        assertEquals(propertyName + " read method declaring class", expectedDeclaringClass, descriptor.getReadMethod().getDeclaringClass());
+        assertNotNull(descriptor, propertyName + "descriptor");
+        assertEquals(expectedDeclaringClass, descriptor.getReadMethod().getDeclaringClass(), propertyName + " read method declaring class");
     }
 
     /**
@@ -162,9 +132,8 @@ public class Jira357TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -172,25 +141,22 @@ public class Jira357TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Test {@link PropertyUtils#getPropertyDescriptors(Class)}
      */
+    @Test
     public void testPropertyUtils_getPropertyDescriptors_Bar() throws Exception {
-
-        // FIXME the isBar() method returning AbstractTestBean.class as the
-        // declaring class instead of ConcreteTestBean.class
-        // causing this test to fail - so its commented out for now
-        // checkReadMethod("bar", ConcreteTestBean.class);
+        checkReadMethod("bar", ConcreteTestBean.class);
     }
 
     /**
      * Test {@link PropertyUtils#getPropertyDescriptors(Class)}
      */
+    @Test
     public void testPropertyUtils_getPropertyDescriptors_Foo() throws Exception {
         checkReadMethod("foo", ConcreteTestBean.class);
     }
@@ -198,6 +164,7 @@ public class Jira357TestCase extends TestCase {
     /**
      * Test {@link PropertyUtils#getPropertyDescriptors(Class)}
      */
+    @Test
     public void testPropertyUtils_getPropertyDescriptors_InnerClassProperty() throws Exception {
         checkReadMethod("innerClassProperty", ConcreteTestBean.class);
     }

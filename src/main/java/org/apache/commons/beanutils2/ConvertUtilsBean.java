@@ -17,10 +17,14 @@
 
 package org.apache.commons.beanutils2;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -40,7 +44,10 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils2.converters.ArrayConverter;
 import org.apache.commons.beanutils2.converters.BigDecimalConverter;
@@ -50,23 +57,29 @@ import org.apache.commons.beanutils2.converters.ByteConverter;
 import org.apache.commons.beanutils2.converters.CalendarConverter;
 import org.apache.commons.beanutils2.converters.CharacterConverter;
 import org.apache.commons.beanutils2.converters.ClassConverter;
+import org.apache.commons.beanutils2.converters.ColorConverter;
 import org.apache.commons.beanutils2.converters.ConverterFacade;
 import org.apache.commons.beanutils2.converters.DateConverter;
+import org.apache.commons.beanutils2.converters.DimensionConverter;
 import org.apache.commons.beanutils2.converters.DoubleConverter;
 import org.apache.commons.beanutils2.converters.DurationConverter;
 import org.apache.commons.beanutils2.converters.EnumConverter;
 import org.apache.commons.beanutils2.converters.FileConverter;
 import org.apache.commons.beanutils2.converters.FloatConverter;
+import org.apache.commons.beanutils2.converters.InetAddressConverter;
 import org.apache.commons.beanutils2.converters.IntegerConverter;
 import org.apache.commons.beanutils2.converters.LocalDateConverter;
 import org.apache.commons.beanutils2.converters.LocalDateTimeConverter;
 import org.apache.commons.beanutils2.converters.LocalTimeConverter;
+import org.apache.commons.beanutils2.converters.LocaleConverter;
 import org.apache.commons.beanutils2.converters.LongConverter;
 import org.apache.commons.beanutils2.converters.MonthDayConverter;
 import org.apache.commons.beanutils2.converters.OffsetDateTimeConverter;
 import org.apache.commons.beanutils2.converters.OffsetTimeConverter;
 import org.apache.commons.beanutils2.converters.PathConverter;
+import org.apache.commons.beanutils2.converters.PatternConverter;
 import org.apache.commons.beanutils2.converters.PeriodConverter;
+import org.apache.commons.beanutils2.converters.PointConverter;
 import org.apache.commons.beanutils2.converters.ShortConverter;
 import org.apache.commons.beanutils2.converters.StringConverter;
 import org.apache.commons.beanutils2.converters.URIConverter;
@@ -84,6 +97,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * TODO DOCS
+ * <p>2.0</p>
+ *
+ * {@link ConvertUtilsBean} implementation that delegates {@code convert()}
+ * methods to the new {@link ConvertUtilsBean#convert(Object, Class)} method.
+ *
+ * <p>
+ * To configure this implementation for the current context ClassLoader invoke
+ * {@code BeanUtilsBean.setInstance(new BeanUtilsBean2());}
+ * </p>
+ *
+ * <p>Pre-2.0</p>
+ *
  * <p>Utility methods for converting String scalar values to objects of the
  * specified Class, String arrays to arrays of the specified Class.  The
  * actual {@link Converter} instance to be used can be registered for each
@@ -97,6 +123,8 @@ import org.apache.commons.logging.LogFactory;
  * <li>byte and java.lang.Byte (default to zero)</li>
  * <li>char and java.lang.Character (default to a space)</li>
  * <li>java.lang.Class (no default value)</li>
+ * <li>java.awt.Color (no default value)</li>
+ * <li>java.awt.Dimension (no default value)</li>
  * <li>double and java.lang.Double (default to zero)</li>
  * <li>float and java.lang.Float (default to zero)</li>
  * <li>int and java.lang.Integer (default to zero)</li>
@@ -105,6 +133,8 @@ import org.apache.commons.logging.LogFactory;
  * <li>java.lang.String (default to null)</li>
  * <li>java.lang.Enum (default to null)</li>
  * <li>java.io.File (no default value)</li>
+ * <li>java.net.InetAddress (no default value)</li>
+ * <li>java.util.Locale (no default value)</li>
  * <li>java.nio.file.Path (no default value)</li>
  * <li>java.net.URL (no default value)</li>
  * <li>java.net.URI (no default value)</li>
@@ -120,7 +150,9 @@ import org.apache.commons.logging.LogFactory;
  * <li>java.time.ZonedDateTime (no default value)</li>
  * <li>java.time.Duration (no default value)</li>
  * <li>java.time.MonthDay (no default value)</li>
+ * <li>java.util.regex.Pattern (no default value)</li>
  * <li>java.time.Period (no default value)</li>
+ * <li>java.awt.Point (no default value)</li>
  * <li>java.time.Year (no default value)</li>
  * <li>java.time.YearMonth (no default value)</li>
  * <li>java.time.ZoneId (no default value)</li>
@@ -161,7 +193,7 @@ import org.apache.commons.logging.LogFactory;
  * </p>
  *
  * <p>
- * Converters that generate <i>arrays</i> of each of the primitive types are
+ * Converters that generate <em>arrays</em> of each of the primitive types are
  * also automatically configured (including String[]). When passed null
  * or invalid input, these return an empty array (not null). See class
  * AbstractArrayConverter for the supported input formats for these converters.
@@ -201,39 +233,20 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Convert the specified value into a String.  If the specified value
-     * is an array, the first element (converted to a String) will be
-     * returned.  The registered {@link Converter} for the
-     * {@link String} class will be used, which allows
-     * applications to customize Object-&gt;String conversions (the default
-     * implementation simply uses toString()).
+     * Delegates to the new {@link ConvertUtilsBean#convert(Object, Class)}
+     * method.
      *
      * @param value Value to be converted (may be null)
      * @return The converted String value or null if value is null
+     *
+     * @see ConvertUtilsBean#convert(String[], Class)
      */
-    public String convert(Object value) {
-
-        if (value == null) {
-            return null;
-        }
-        if (!value.getClass().isArray()) {
-            final Converter<String> converter = lookup(String.class);
-            return converter.convert(String.class, value);
-        }
-        if (Array.getLength(value) < 1) {
-            return null;
-        }
-        value = Array.get(value, 0);
-        if (value == null) {
-            return null;
-        }
-        final Converter<String> converter = lookup(String.class);
-        return converter.convert(String.class, value);
-
+    public String convert(final Object value) {
+        return (String) convert(value, String.class);
     }
 
     /**
-     * Convert the value to an object of the specified class (if
+     * Converts the value to an object of the specified class (if
      * possible). If no converter for the desired target type is registered,
      * the passed in object is returned unchanged.
      *
@@ -288,58 +301,31 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Convert the specified value to an object of the specified class (if
-     * possible). Otherwise, return a {@link String} representation of the value.
+     * Delegates to the new {@link ConvertUtilsBean#convert(Object, Class)}
+     * method.
      *
-     * @param <T> The <em>desired</em> return type
      * @param value Value to be converted (may be null)
      * @param clazz Java class to be converted to (must not be null)
-     * @return The converted value
+     * @return The converted value or null if value is null
      *
-     * @throws ConversionException if thrown by an underlying Converter
+     * @see ConvertUtilsBean#convert(String[], Class)
      */
     public <T> Object convert(final String value, final Class<T> clazz) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Convert string '" + value + "' to class '" + clazz.getName() + "'");
-        }
-        final Converter<T> converter = lookup(clazz);
-        if (converter == null) {
-            final Converter<String> sConverter = lookup(String.class);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("  Using converter " + converter);
-            }
-            return sConverter.convert(String.class, value);
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("  Using converter " + converter);
-        }
-        return converter.convert(clazz, value);
+        return convert((Object) value, clazz);
     }
 
     /**
-     * Convert an array of specified values to an array of objects of the
-     * specified class (if possible).  If the specified Java class is itself
-     * an array class, this class will be the type of the returned value.
-     * Otherwise, an array will be constructed whose component type is the
-     * specified class.
+     * Delegates to the new {@link ConvertUtilsBean#convert(Object, Class)}
+     * method.
      *
-     * @param <T> The Class type.
-     * @param values Array of values to be converted
+     * @param value Array of values to be converted
      * @param clazz Java array or element class to be converted to (must not be null)
      * @return The converted value
      *
-     * @throws ConversionException if thrown by an underlying Converter
+     * @see ConvertUtilsBean#convert(String[], Class)
      */
-    public <T> Object convert(final String[] values, final Class<T> clazz) {
-        final Class<?> type = clazz.isArray() ? clazz.getComponentType() : clazz;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Convert String[" + values.length + "] to class '" + type.getName() + "[]'");
-        }
-        Converter converter = lookup(type);
-        if (converter == null) {
-            converter = lookup(String.class);
-        }
-        return convert(values, type, converter);
+    public <T> Object convert(final String[] value, final Class<T> clazz) {
+        return convert((Object) value, clazz);
     }
 
     private <T> Object convert(final String[] values, final Class<T> type, final Converter<T> converter) {
@@ -354,7 +340,7 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Remove all registered {@link Converter}s, and re-establish the
+     * Deregisters all registered {@link Converter}s, and re-establish the
      * standard Converters.
      */
     public void deregister() {
@@ -380,7 +366,7 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Look up and return any registered {@link Converter} for the specified
+     * Looks up and return any registered {@link Converter} for the specified
      * source and destination class; if there is no registered Converter,
      * return {@code null}.
      *
@@ -390,14 +376,10 @@ public class ConvertUtilsBean {
      * @return The registered {@link Converter} or {@code null} if not found
      */
     public <T> Converter<T> lookup(final Class<?> sourceType, final Class<T> targetType) {
-
-        if (targetType == null) {
-            throw new IllegalArgumentException("Target type is missing");
-        }
+        Objects.requireNonNull(targetType, "targetType");
         if (sourceType == null) {
             return lookup(targetType);
         }
-
         Converter converter = null;
         // Convert --> String
         if (targetType == String.class) {
@@ -428,7 +410,7 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Look up and return any registered {@link Converter} for the specified
+     * Looks up and return any registered {@link Converter} for the specified
      * destination class; if there is no registered Converter, return
      * {@code null}.
      *
@@ -442,12 +424,12 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Register the provided converters with the specified defaults.
+     * Registers the provided converters with the specified defaults.
      *
      * @param throwException {@code true} if the converters should
      * throw an exception when a conversion error occurs, otherwise
      * {@code false} if a default value should be used.
-     * @param defaultNull {@code true}if the <i>standard</i> converters
+     * @param defaultNull {@code true}if the <em>standard</em> converters
      * (see {@link ConvertUtilsBean#registerStandard(boolean, boolean)})
      * should use a default value of {@code null</code>, otherwise <code>false}.
      * N.B. This values is ignored if {@code throwException</code> is <code>true}
@@ -469,7 +451,7 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Register a custom {@link Converter} for the specified destination
+     * Registers a custom {@link Converter} for the specified destination
      * {@code Class}, replacing any previously registered Converter.
      *
      * @param converter Converter to be registered
@@ -481,7 +463,7 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Register a new ArrayConverter with the specified element delegate converter
+     * Registers a new ArrayConverter with the specified element delegate converter
      * that returns a default array of the specified size in the event of conversion errors.
      *
      * @param componentType The component type of the array
@@ -503,14 +485,14 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Register array converters.
+     * Registers array converters.
      *
      * @param throwException {@code true} if the converters should
-     * throw an exception when a conversion error occurs, otherwise <code>
+     * throw an exception when a conversion error occurs, otherwise
      * {@code false} if a default value should be used.
      * @param defaultArraySize The size of the default array value for array converters
      * (N.B. This values is ignored if {@code throwException</code> is <code>true}).
-     * Specifying a value less than zero causes a <code>null<code> value to be used for
+     * Specifying a value less than zero causes a {@code null} value to be used for
      * the default.
      */
     private void registerArrays(final boolean throwException, final int defaultArraySize) {
@@ -541,10 +523,13 @@ public class ConvertUtilsBean {
 
         // Other
         registerArrayConverter(Class.class,          new ClassConverter(),         throwException, defaultArraySize);
+        registerArrayConverter(Color.class,          new ColorConverter(),         throwException, defaultArraySize);
         registerArrayConverter(Enum.class,           new EnumConverter(),          throwException, defaultArraySize);
         registerArrayConverter(java.util.Date.class, new DateConverter(),          throwException, defaultArraySize);
         registerArrayConverter(Calendar.class,       new CalendarConverter(),      throwException, defaultArraySize);
+        registerArrayConverter(Dimension.class,      new DimensionConverter(),     throwException, defaultArraySize);
         registerArrayConverter(File.class,           new FileConverter(),          throwException, defaultArraySize);
+        registerArrayConverter(InetAddress.class,    new InetAddressConverter(),   throwException, defaultArraySize);
         registerArrayConverter(Path.class,           new PathConverter(),          throwException, defaultArraySize);
         registerArrayConverter(java.sql.Date.class,  new SqlDateConverter(),       throwException, defaultArraySize);
         registerArrayConverter(java.sql.Time.class,  new SqlTimeConverter(),       throwException, defaultArraySize);
@@ -555,12 +540,15 @@ public class ConvertUtilsBean {
         registerArrayConverter(LocalDate.class,      new LocalDateConverter(),     throwException, defaultArraySize);
         registerArrayConverter(LocalDateTime.class,  new LocalDateTimeConverter(), throwException, defaultArraySize);
         registerArrayConverter(LocalTime.class,      new LocalTimeConverter(),     throwException, defaultArraySize);
+        registerArrayConverter(Locale.class,         new LocaleConverter(),        throwException, defaultArraySize);
         registerArrayConverter(OffsetDateTime.class, new OffsetDateTimeConverter(),throwException, defaultArraySize);
         registerArrayConverter(OffsetTime.class,     new OffsetTimeConverter(),    throwException, defaultArraySize);
         registerArrayConverter(ZonedDateTime.class,  new ZonedDateTimeConverter(), throwException, defaultArraySize);
         registerArrayConverter(Duration.class,       new DurationConverter(),      throwException, defaultArraySize);
         registerArrayConverter(MonthDay.class,       new MonthDayConverter(),      throwException, defaultArraySize);
+        registerArrayConverter(Pattern.class,        new PatternConverter(),       throwException, defaultArraySize);
         registerArrayConverter(Period.class,         new PeriodConverter(),        throwException, defaultArraySize);
+        registerArrayConverter(Point.class,          new PointConverter(),         throwException, defaultArraySize);
         registerArrayConverter(Year.class,           new YearConverter(),          throwException, defaultArraySize);
         registerArrayConverter(YearMonth.class,      new YearMonthConverter(),     throwException, defaultArraySize);
         registerArrayConverter(ZoneId.class,         new ZoneIdConverter(),        throwException, defaultArraySize);
@@ -569,19 +557,19 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Register the converters for other types.
+     * Registers the converters for other types.
      * </p>
      * This method registers the following converters:
      * <ul>
      *     <li>{@code Class.class} - {@link ClassConverter}</li>
      *     <li>{@code Enum.class} - {@link EnumConverter}</li>
-     *     <li>{@link java.util.Date.class} - {@link DateConverter}</li>
-     *     <li>{@link java.util.Calendar.class} - {@link CalendarConverter}</li>
+     *     <li>{@code java.util.Date.class} - {@link DateConverter}</li>
+     *     <li>{@code java.util.Calendar.class} - {@link CalendarConverter}</li>
      *     <li>{@code File.class} - {@link FileConverter}</li>
      *     <li>{@code Path.class} - {@link PathConverter}</li>
-     *     <li>{@link java.sql.Date.class} - {@link SqlDateConverter}</li>
-     *     <li>{@link java.sql.Time.class} - {@link SqlTimeConverter}</li>
-     *     <li>{@link java.sql.Timestamp.class} - {@link SqlTimestampConverter}</li>
+     *     <li>{@code java.sql.Date.class} - {@link SqlDateConverter}</li>
+     *     <li>{@code java.sql.Time.class} - {@link SqlTimeConverter}</li>
+     *     <li>{@code java.sql.Timestamp.class} - {@link SqlTimestampConverter}</li>
      *     <li>{@code URL.class} - {@link URLConverter}</li>
      *     <li>{@code URI.class} - {@link URIConverter}</li>
      *     <li>{@code UUID.class} - {@link UUIDConverter}</li>
@@ -606,10 +594,13 @@ public class ConvertUtilsBean {
     private void registerOther(final boolean throwException) {
         // @formatter:off
         register(Class.class,          throwException ? new ClassConverter<>()        : new ClassConverter<>(null));
+        register(Color.class,          throwException ? new ColorConverter()          : new ColorConverter(null));
         register(Enum.class,           throwException ? new EnumConverter()           : new EnumConverter(null));
         register(java.util.Date.class, throwException ? new DateConverter()           : new DateConverter(null));
+        register(Dimension.class,      throwException ? new DimensionConverter()      : new DimensionConverter(null));
         register(Calendar.class,       throwException ? new CalendarConverter()       : new CalendarConverter(null));
         register(File.class,           throwException ? new FileConverter()           : new FileConverter(null));
+        register(InetAddress.class,    throwException ? new InetAddressConverter()    : new InetAddressConverter(null));
         register(Path.class,           throwException ? new PathConverter()           : new PathConverter(null));
         register(java.sql.Date.class,  throwException ? new SqlDateConverter()        : new SqlDateConverter(null));
         register(java.sql.Time.class,  throwException ? new SqlTimeConverter()        : new SqlTimeConverter(null));
@@ -620,12 +611,15 @@ public class ConvertUtilsBean {
         register(LocalDate.class,      throwException ? new LocalDateConverter()      : new LocalDateConverter(null));
         register(LocalDateTime.class,  throwException ? new LocalDateTimeConverter()  : new LocalDateTimeConverter(null));
         register(LocalTime.class,      throwException ? new LocalTimeConverter()      : new LocalTimeConverter(null));
+        register(Locale.class,         throwException ? new LocaleConverter()         : new LocaleConverter(null));
         register(OffsetDateTime.class, throwException ? new OffsetDateTimeConverter() : new OffsetDateTimeConverter(null));
         register(OffsetTime.class,     throwException ? new OffsetTimeConverter()     : new OffsetTimeConverter(null));
         register(ZonedDateTime.class,  throwException ? new ZonedDateTimeConverter()  : new ZonedDateTimeConverter(null));
         register(Duration.class,       throwException ? new DurationConverter()       : new DurationConverter(null));
         register(MonthDay.class,       throwException ? new MonthDayConverter()       : new MonthDayConverter(null));
+        register(Pattern.class,        throwException ? new PatternConverter()        : new PatternConverter(null));
         register(Period.class,         throwException ? new PeriodConverter()         : new PeriodConverter(null));
+        register(Point.class,          throwException ? new PointConverter()          : new PointConverter(null));
         register(Year.class,           throwException ? new YearConverter()           : new YearConverter(null));
         register(YearMonth.class,      throwException ? new YearMonthConverter()      : new YearMonthConverter(null));
         register(ZoneId.class,         throwException ? new ZoneIdConverter()         : new ZoneIdConverter(null));
@@ -634,7 +628,7 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Register the converters for primitive types.
+     * Registers the converters for primitive types.
      * </p>
      * This method registers the following converters:
      * <ul>
@@ -663,7 +657,7 @@ public class ConvertUtilsBean {
     }
 
     /**
-     * Register the converters for standard types.
+     * Registers the converters for standard types.
      * </p>
      * This method registers the following converters:
      * <ul>
@@ -682,7 +676,7 @@ public class ConvertUtilsBean {
      * @param throwException {@code true} if the converters should
      * throw an exception when a conversion error occurs, otherwise <code>
      * {@code false} if a default value should be used.
-     * @param defaultNull {@code true}if the <i>standard</i> converters
+     * @param defaultNull {@code true}if the <em>standard</em> converters
      * (see {@link ConvertUtilsBean#registerStandard(boolean, boolean)})
      * should use a default value of {@code null</code>, otherwise <code>false}.
      * N.B. This values is ignored if {@code throwException</code> is <code>true}

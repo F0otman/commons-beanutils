@@ -63,7 +63,7 @@ public abstract class BaseDynaBeanMapDecorator<K> implements Map<K, Object> {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -117,10 +117,7 @@ public abstract class BaseDynaBeanMapDecorator<K> implements Map<K, Object> {
      * @throws IllegalArgumentException if the {@link DynaBean} is null.
      */
     public BaseDynaBeanMapDecorator(final DynaBean dynaBean, final boolean readOnly) {
-        if (dynaBean == null) {
-            throw new IllegalArgumentException("DynaBean is null");
-        }
-        this.dynaBean = dynaBean;
+        this.dynaBean = Objects.requireNonNull(dynaBean, "dynaBean");
         this.readOnly = readOnly;
     }
 
@@ -347,7 +344,7 @@ public abstract class BaseDynaBeanMapDecorator<K> implements Map<K, Object> {
      * @return String representation of the object
      */
     private String toString(final Object obj) {
-        return obj == null ? null : obj.toString();
+        return Objects.toString(obj, null);
     }
 
     /**

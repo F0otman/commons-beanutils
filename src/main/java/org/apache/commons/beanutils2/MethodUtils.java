@@ -22,10 +22,13 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
+import org.apache.commons.lang3.SystemProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,23 +67,12 @@ public class MethodUtils {
          * @param paramTypes the array of classes representing the parameter types
          * @param exact whether the match has to be exact.
          */
-        public MethodDescriptor(final Class<?> cls, final String methodName, Class<?>[] paramTypes,
+        public MethodDescriptor(final Class<?> cls, final String methodName, final Class<?>[] paramTypes,
                 final boolean exact) {
-            if (cls == null) {
-                throw new IllegalArgumentException("Class cannot be null");
-            }
-            if (methodName == null) {
-                throw new IllegalArgumentException("Method Name cannot be null");
-            }
-            if (paramTypes == null) {
-                paramTypes = BeanUtils.EMPTY_CLASS_ARRAY;
-            }
-
-            this.cls = cls;
-            this.methodName = methodName;
-            this.paramTypes = paramTypes;
+            this.cls = Objects.requireNonNull(cls, "cls");
+            this.methodName = Objects.requireNonNull(methodName, "methodName");
+            this.paramTypes = paramTypes != null ? paramTypes : BeanUtils.EMPTY_CLASS_ARRAY;
             this.exact= exact;
-
             this.hashCode = methodName.length();
         }
         /**
@@ -98,7 +90,7 @@ public class MethodUtils {
             return exact == md.exact &&
             methodName.equals(md.methodName) &&
             cls.equals(md.cls) &&
-            java.util.Arrays.equals(paramTypes, md.paramTypes);
+            Arrays.equals(paramTypes, md.paramTypes);
         }
         /**
          * Returns the string length of method name. I.e. if the
@@ -1275,7 +1267,7 @@ public class MethodUtils {
             if (!loggedAccessibleWarning) {
                 boolean vulnerableJVM = false;
                 try {
-                    final String specVersion = System.getProperty("java.specification.version");
+                    final String specVersion = SystemProperties.getJavaSpecificationVersion();
                     if (specVersion.charAt(0) == '1' &&
                             (specVersion.charAt(2) == '0' ||
                              specVersion.charAt(2) == '1' ||

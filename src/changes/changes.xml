@@ -29,14 +29,11 @@
   </properties>
   <body>
     <release version="2.0.0" date="20YY-MM-DD" description="Update to Java 8.">
-      <action issue="BEANUTILS-346" dev="melloware" type="update" due-to="Melloware">
-        New converter for Enum.
-      </action>
-      <action issue="BEANUTILS-402" dev="melloware" type="update" due-to="Melloware">
-        Double-Checked Locking anti pattern in WeakFastHashMap.
-      </action>
       <action issue="BEANUTILS-503" dev="ggregory" type="update" due-to="Gary Gregory">
         Change packaging from org.apache.commons.beanutils to org.apache.commons.beanutils2.
+      </action>
+      <action issue="BEANUTILS-402" dev="melloware" type="fix" due-to="Melloware">
+        Double-Checked Locking anti pattern in WeakFastHashMap.
       </action>
       <action issue="BEANUTILS-505" dev="ggregory" type="update" due-to="Gary Gregory">
         Add missing serialVersionUID to Serializable classes.
@@ -74,8 +71,8 @@
       <action dev="ggregory" type="fix" due-to="Andrei Korzhevskii, Gary Gregory">
         Refactor logger usage #72.
       </action>
-      <action dev="ggregory" type="fix" due-to="SethFalco">
-        Start migration to JUnit 5 #93.
+      <action dev="ggregory" type="fix" due-to="SethFalco, Steve Bosman, Gary Gregory">
+        Migrate to JUnit 5 #93, #283, #284, #285.
       </action>
       <action dev="ggregory" type="fix" due-to="Gary Gregory">
         Fix SpotBugs [ERROR] Medium: org.apache.commons.beanutils2.BasicDynaClass.constructorTypes should be both final and package protected [org.apache.commons.beanutils2.BasicDynaClass] At BasicDynaClass.java:[line 95] MS_FINAL_PKGPROTECT.
@@ -108,7 +105,7 @@
         Fix SpotBugs [ERROR] Medium: org.apache.commons.beanutils2.WrapDynaClass.getDynaProperties() may expose internal representation by returning WrapDynaClass.properties [org.apache.commons.beanutils2.WrapDynaClass] At WrapDynaClass.java:[line 172] EI_EXPOSE_REP.
       </action>
       <action dev="ggregory" type="fix" due-to="Melloware, sebbASF, Gary Gregory, Michal Landsman">
-        Replace Commons Collections Test Framework 3.2.2 with 4.4 #40.
+        Replace Commons Collections Test Framework 3.2.2 with 4.5.0-M2 #40.
       </action>
       <action dev="ggregory" type="fix" due-to="Gary Gregory">
         Provide error index in ConversionException message in DateTimeConverter.parse(Class, Class, String, DateFormat).
@@ -116,12 +113,30 @@
       <action dev="ggregory" type="fix" due-to="Gary Gregory">
         Avoid possible NPE in DateTimeConverter.parse(Class, Class, String).
       </action>
+      <action dev="ggregory" type="fix" due-to="Claude Warren, Gary Gregory">
+        Annotate Converter with @FunctionalInterface.
+      </action>
+      <action issue="BEANUTILS-564" dev="ggregory" type="fix" due-to="SingingBush">
+        Fix JDK 21 CI failure due to locale changes #201.
+      </action>
+      <action dev="ggregory" type="fix" due-to="Seth Falco">
+        Fix warnings and To-Dos #92.
+      </action>
+      <action type="fix" dev="ggregory" due-to="Gary Gregory">Replace internal use of Locale.ENGLISH with Locale.ROOT.</action>
+      <action issue="BEANUTILS-541" dev="ggregory" type="fix" due-to="Sergey Chernov">FluentPropertyBeanIntrospector caches corrupted writeMethod (2.x) #68.</action>
       <!-- ADD -->
+      <action issue="BEANUTILS-346" dev="melloware" type="add" due-to="Melloware">New converter for Enum.</action>
       <action dev="ggregory" type="add" due-to="Dependabot, Gary Gregory">
         Add github/codeql-action #118.
       </action>
       <action dev="ggregory" type="add" due-to="Dependabot, Gary Gregory">
         Add and use ConversionException.format(String, Object...).
+      </action>
+      <action dev="ggregory" type="add" due-to="Seth Falco, Gary Gregory">
+        Add Converters for additional types: Color, Dimension, InetAddress, Locale, Pattern, Point #47.
+      </action>
+      <action dev="ggregory" type="add" due-to="Sergey Chernov, Gary Gregory">
+        Make PropertyUtilsBean.getReadMethod(Class, PropertyDescriptor) public #232.
       </action>
       <!--  UPDATES -->
       <action dev="ggregory" type="update" due-to="Dependabot, Gary Gregory">
@@ -170,7 +185,7 @@
         Bump BC version from 1.9.3 to 1.9.4.
       </action>
       <action dev="ggregory" type="update" due-to="Gary Gregory, Dependabot">
-        Bump commons-parent from 50 to 64, #135, #152, #156, #171, #172.
+        Bump org.apache.commons:commons-parent from 50 to 74 #229, #245, #254, #264, #274, #279.
       </action>
       <action dev="ggregory" type="update" due-to="Dependabot">
         Bump biz.aQute.bndlib from 5.1.0 to 6.4.1 #29, #45, #79, #109, #119, #121, #147, #175.
@@ -190,11 +205,20 @@
       <action dev="ggregory" type="update" due-to="Dependabot">
         Bump spotbugs from 4.5.3 to 4.6.0.
       </action>
-      <action dev="ggregory" type="update" due-to="Gary Gregory">
-        Bump commons-lang3 from 3.12.0 to 3.14.0.
+      <action dev="ggregory" type="update" due-to="Gary Gregory, Dependabot">
+        Bump org.apache.commons:commons-lang3 from 3.12.0 to 3.17.0 #263, #269, #280.
       </action>
-      <action dev="ggregory" type="update" due-to="Gary Gregory">
-        Bump commons-logging:commons-logging from 1.2 to 1.3.0.
+      <action dev="ggregory" type="update" due-to="Gary Gregory, Dependabot">
+        Bump commons-logging:commons-logging from 1.2 to 1.3.4 #226, #246, #259, #275.
+      </action>
+      <!-- REMOVE -->
+      <action dev="ggregory" type="update" due-to="Gary Gregory, Niall Pemberton">
+        Removed BeanUtilsBean2, use BeanUtilsBean. BeanUtilsBean2 functionality is now in BeanUtilsBean.
+        Previous BeanUtilsBean functionality for those methods is no longer supported.
+      </action>
+      <action dev="ggregory" type="update" due-to="Gary Gregory, Niall Pemberton">
+        Removed ConvertUtilsBean2, use ConvertUtilsBean. ConvertUtilsBean2 functionality is now in ConvertUtilsBean.
+        Previous ConvertUtilsBean functionality for those methods is no longer supported.
       </action>
     </release>
 

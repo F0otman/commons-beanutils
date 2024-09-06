@@ -18,20 +18,19 @@
 package org.apache.commons.beanutils2.converters;
 
 import org.apache.commons.beanutils2.locale.converters.DoubleLocaleConverter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Case for the DoubleLocaleConverter class.
  */
-public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<Double> {
-
-    public DoubleLocaleConverterTestCase(final String name) {
-        super(name);
-    }
+public class DoubleLocaleConverterTestCase extends AbstractLocaleConverterTestCase<Double> {
 
     /**
      * Sets up instance variables required by this test case.
      */
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
 
         super.setUp();
@@ -42,22 +41,14 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     }
 
     /**
-     * Tear down instance variables required by this test case.
-     */
-    @Override
-    public void tearDown() {
-        super.tearDown();
-    }
-
-    /**
      * Test Converter() constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_2() {
 
-        // ------------- Construct using default locale ------------
+        // Construct using default locale
         converter = DoubleLocaleConverter.builder().get();
 
         // Perform Tests
@@ -72,11 +63,11 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
      * Test Converter(locPattern) constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_3() {
 
-        // ------------- Construct using localized pattern (default locale) --------
+        // Construct using localized pattern (default locale)
         converter = DoubleLocaleConverter.builder().setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -90,9 +81,10 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     /**
      * Test Converter(Locale) constructor
      */
+    @Test
     public void testConstructor_4() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DoubleLocaleConverter.builder().setLocale(localizedLocale).get();
 
         // Perform Tests
@@ -106,9 +98,10 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     /**
      * Test Converter(Locale, locPattern) constructor
      */
+    @Test
     public void testConstructor_5() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DoubleLocaleConverter.builder().setLocale(localizedLocale).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -122,9 +115,10 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     /**
      * Test Converter(Locale, pattern) constructor
      */
+    @Test
     public void testConstructor_6() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DoubleLocaleConverter.builder().setLocale(localizedLocale).setPattern(defaultDecimalPattern).get();
 
         // Perform Tests
@@ -138,9 +132,10 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     /**
      * Test Converter(Locale, pattern, locPattern) constructor
      */
+    @Test
     public void testConstructor_7() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DoubleLocaleConverter.builder().setLocale(localizedLocale).setPattern(localizedDecimalPattern).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -154,9 +149,10 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     /**
      * Test Converter(defaultValue) constructor
      */
+    @Test
     public void testConstructor_8() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DoubleLocaleConverter.builder().setDefault(defaultValue).get();
 
         // Perform Tests
@@ -170,9 +166,10 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     /**
      * Test Converter(defaultValue, locPattern) constructor
      */
+    @Test
     public void testConstructor_9() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DoubleLocaleConverter.builder().setDefault(defaultValue).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -186,9 +183,10 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
     /**
      * Test Converter(defaultValue, locale, pattern, localizedPattern) constructor
      */
+    @Test
     public void testConstructorMain() {
 
-        // ------------- Construct with localized pattern ------------
+        // Construct with localized pattern
         converter = DoubleLocaleConverter.builder().setDefault(defaultValue).setLocale(localizedLocale).setPattern(localizedDecimalPattern)
                 .setLocalizedPattern(true).get();
 
@@ -223,7 +221,7 @@ public class DoubleLocaleConverterTestCase extends BaseLocaleConverterTestCase<D
         // **************************************************************************
         // convertValueToType(converter, "(B)", Integer.class, localizedDecimalValue, localizedDecimalPattern, expectedValue);
 
-        // ------------- Construct with non-localized pattern ------------
+        // Construct with non-localized pattern
         converter = DoubleLocaleConverter.builder().setDefault(defaultValue).setLocale(localizedLocale).setPattern(defaultDecimalPattern)
                 .setLocalizedPattern(false).get();
 

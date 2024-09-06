@@ -21,30 +21,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 
-import junit.framework.TestSuite;
-
 /**
  * Test Case for the ZonedDateTimeConverter class.
  */
 public class ZonedDateTimeConverterTestCase extends AbstractDateConverterTest<ZonedDateTime> {
-
-    /**
-     * Create Test Suite
-     *
-     * @return test suite
-     */
-    public static TestSuite suite() {
-        return new TestSuite(ZonedDateTimeConverterTestCase.class);
-    }
-
-    /**
-     * Constructs a new Date test case.
-     *
-     * @param name Test Name
-     */
-    public ZonedDateTimeConverterTestCase(final String name) {
-        super(name);
-    }
 
     /**
      * Gets the expected type

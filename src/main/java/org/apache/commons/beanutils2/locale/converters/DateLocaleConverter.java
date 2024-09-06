@@ -22,6 +22,7 @@ import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -79,7 +80,7 @@ public class DateLocaleConverter<D extends Date> extends BaseLocaleConverter<D> 
          * Sets the leniency policy.
          *
          * @param lenient the leniency policy.
-         * @return this.
+         * @return {@code this} instance.
          */
         public B setLenient(final boolean lenient) {
             this.lenient = lenient;
@@ -186,7 +187,7 @@ public class DateLocaleConverter<D extends Date> extends BaseLocaleConverter<D> 
                 }
             } else if (thisChar == '\'') {
                 quoted = true;
-            } else if ((thisChar >= 'a' && thisChar <= 'z') || (thisChar >= 'A' && thisChar <= 'Z')) {
+            } else if (thisChar >= 'a' && thisChar <= 'z' || thisChar >= 'A' && thisChar <= 'Z') {
                 final int index = fromChars.indexOf(thisChar);
                 if (index == -1) {
                     throw new IllegalArgumentException("Illegal pattern character '" + thisChar + "'");
@@ -230,8 +231,8 @@ public class DateLocaleConverter<D extends Date> extends BaseLocaleConverter<D> 
         }
 
         // Handle Calendar
-        if (value instanceof java.util.Calendar) {
-            return (D) ((java.util.Calendar) value).getTime();
+        if (value instanceof Calendar) {
+            return (D) ((Calendar) value).getTime();
         }
 
         if (localizedPattern) {

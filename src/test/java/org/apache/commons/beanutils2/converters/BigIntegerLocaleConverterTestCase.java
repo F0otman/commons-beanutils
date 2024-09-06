@@ -20,21 +20,19 @@ package org.apache.commons.beanutils2.converters;
 import java.math.BigInteger;
 
 import org.apache.commons.beanutils2.locale.converters.BigIntegerLocaleConverter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Case for the BigIntegerLocaleConverter class.
- *
  */
-public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCase<BigInteger> {
-
-    public BigIntegerLocaleConverterTestCase(final String name) {
-        super(name);
-    }
+public class BigIntegerLocaleConverterTestCase extends AbstractLocaleConverterTestCase<BigInteger> {
 
     /**
      * Sets up instance variables required by this test case.
      */
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         defaultValue = new BigInteger("999");
@@ -42,22 +40,14 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     }
 
     /**
-     * Tear down instance variables required by this test case.
-     */
-    @Override
-    public void tearDown() {
-        super.tearDown();
-    }
-
-    /**
      * Test Converter() constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_2() {
 
-        // ------------- Construct using default locale ------------
+        // Construct using default locale
         converter = BigIntegerLocaleConverter.builder().get();
 
         // Perform Tests
@@ -72,11 +62,11 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
      * Test Converter(locPattern) constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_3() {
 
-        // ------------- Construct using localized pattern (default locale) --------
+        // Construct using localized pattern (default locale)
         converter = BigIntegerLocaleConverter.builder().setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -90,9 +80,10 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     /**
      * Test Converter(Locale) constructor
      */
+    @Test
     public void testConstructor_4() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = BigIntegerLocaleConverter.builder().setLocale(localizedLocale).get();
 
         // Perform Tests
@@ -106,9 +97,10 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     /**
      * Test Converter(Locale, locPattern) constructor
      */
+    @Test
     public void testConstructor_5() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = BigIntegerLocaleConverter.builder().setLocale(localizedLocale).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -122,9 +114,10 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     /**
      * Test Converter(Locale, pattern) constructor
      */
+    @Test
     public void testConstructor_6() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = BigIntegerLocaleConverter.builder().setLocale(localizedLocale).setPattern(defaultIntegerPattern).get();
 
         // Perform Tests
@@ -138,9 +131,10 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     /**
      * Test Converter(Locale, pattern, locPattern) constructor
      */
+    @Test
     public void testConstructor_7() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = BigIntegerLocaleConverter.builder().setLocale(localizedLocale).setPattern(localizedIntegerPattern).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -154,9 +148,10 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     /**
      * Test Converter(defaultValue) constructor
      */
+    @Test
     public void testConstructor_8() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = BigIntegerLocaleConverter.builder().setDefault(defaultValue).get();
 
         // Perform Tests
@@ -170,9 +165,10 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     /**
      * Test Converter(defaultValue, locPattern) constructor
      */
+    @Test
     public void testConstructor_9() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = BigIntegerLocaleConverter.builder().setDefault(defaultValue).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -186,9 +182,10 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
     /**
      * Test Converter(defaultValue, locale, pattern, localizedPattern) constructor
      */
+    @Test
     public void testConstructorMain() {
 
-        // ------------- Construct with localized pattern ------------
+        // Construct with localized pattern
         converter = BigIntegerLocaleConverter.builder().setDefault(defaultValue).setLocale(localizedLocale).setPattern(localizedIntegerPattern)
                 .setLocalizedPattern(true).get();
 
@@ -222,7 +219,7 @@ public class BigIntegerLocaleConverterTestCase extends BaseLocaleConverterTestCa
         // **************************************************************************
         // convertValueToType(converter, "(B)", Double.class, localizedIntegerValue, localizedIntegerPattern, expectedValue);
 
-        // ------------- Construct with non-localized pattern ------------
+        // Construct with non-localized pattern
         converter = BigIntegerLocaleConverter.builder().setDefault(defaultValue).setLocale(localizedLocale).setPattern(defaultIntegerPattern)
                 .setLocalizedPattern(false).get();
 

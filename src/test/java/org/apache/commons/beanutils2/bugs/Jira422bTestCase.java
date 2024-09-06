@@ -16,10 +16,10 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.beanutils2.PropertyUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 final class FirstChildBeanB extends RootBeanB {
 }

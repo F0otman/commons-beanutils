@@ -23,30 +23,10 @@ import java.util.Locale;
 
 import org.apache.commons.beanutils2.converters.AbstractDateConverterTest;
 
-import junit.framework.TestSuite;
-
 /**
  * Test Case for the {@link SqlTimeConverter} class.
  */
 public class SqlTimeConverterTestCase extends AbstractDateConverterTest<Time> {
-
-    /**
-     * Create Test Suite
-     *
-     * @return test suite
-     */
-    public static TestSuite suite() {
-        return new TestSuite(SqlTimeConverterTestCase.class);
-    }
-
-    /**
-     * Constructs a new Date test case.
-     *
-     * @param name Test Name
-     */
-    public SqlTimeConverterTestCase(final String name) {
-        super(name);
-    }
 
     /**
      * Gets the expected type

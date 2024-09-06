@@ -16,48 +16,32 @@
  */
 package org.apache.commons.beanutils2;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * <p>
  * Test Case for the {@code LazyDynaClass} implementation class.
  * </p>
- *
  */
-public class LazyDynaClassTestCase extends TestCase {
-
-    /**
-     * Run this Test
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-    /**
-     * Creates the tests included in this test suite.
-     */
-    public static Test suite() {
-        return new TestSuite(LazyDynaClassTestCase.class);
-    }
+public class LazyDynaClassTestCase {
 
     protected LazyDynaClass dynaClass;
 
     protected String testProperty = "myProperty";
 
     /**
-     * Constructs a new instance of this test case.
-     *
-     * @param name Name of the test case
-     */
-    public LazyDynaClassTestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Sets up instance variables required by this test case.
      */
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         dynaClass = new LazyDynaClass();
     }
@@ -65,7 +49,7 @@ public class LazyDynaClassTestCase extends TestCase {
     /**
      * Tear down instance variables required by this test case.
      */
-    @Override
+    @AfterEach
     public void tearDown() {
         dynaClass = null;
     }
@@ -73,181 +57,151 @@ public class LazyDynaClassTestCase extends TestCase {
     /**
      * Test add(name) method
      */
+    @Test
     public void testAddProperty1() {
         dynaClass.add(testProperty);
         final DynaProperty dynaProperty = dynaClass.getDynaProperty(testProperty);
-        assertEquals("name is correct", testProperty, dynaProperty.getName());
-        assertEquals("type is correct", Object.class, dynaProperty.getType());
+        assertEquals(testProperty, dynaProperty.getName(), "name is correct");
+        assertEquals(Object.class, dynaProperty.getType(), "type is correct");
     }
 
     /**
      * Test add(name, type) method
      */
+    @Test
     public void testAddProperty2() {
         dynaClass.add(testProperty, String.class);
         final DynaProperty dynaProperty = dynaClass.getDynaProperty(testProperty);
-        assertEquals("name is correct", testProperty, dynaProperty.getName());
-        assertEquals("type is correct", String.class, dynaProperty.getType());
+        assertEquals(testProperty, dynaProperty.getName(), "name is correct");
+        assertEquals(String.class, dynaProperty.getType(), "type is correct");
     }
 
     /**
      * Test add(name, type, readable, writable) method
      */
+    @Test
     public void testAddProperty3() {
-        try {
-            dynaClass.add(testProperty, String.class, true, true);
-            fail("add(name, type, readable, writable) did not throw UnsupportedOperationException");
-        } catch (final UnsupportedOperationException expected) {
-            // expected result
-        }
+        assertThrows(UnsupportedOperationException.class, () -> dynaClass.add(testProperty, String.class, true, true));
     }
 
     /**
      * Test add(name) method with 'null' name
      */
+    @Test
     public void testAddPropertyNullName1() {
-        try {
-            dynaClass.add((String) null);
-            fail("null property name not prevented");
-        } catch (final IllegalArgumentException expected) {
-            // expected result
-        }
+        assertThrows(NullPointerException.class, () -> dynaClass.add((String) null));
     }
 
     /**
      * Test add(name, type) method with 'null' name
      */
+    @Test
     public void testAddPropertyNullName2() {
-        try {
-            dynaClass.add(null, String.class);
-            fail("null property name not prevented");
-        } catch (final IllegalArgumentException expected) {
-            // expected result
-        }
+        assertThrows(NullPointerException.class, () -> dynaClass.add(null, String.class));
     }
 
     /**
      * Test add(name, type, readable, writable) method with 'null' name
      */
+    @Test
     public void testAddPropertyNullName3() {
-        try {
-            dynaClass.add(null, String.class, true, true);
-            fail("add(name, type, readable, writable) did not throw UnsupportedOperationException");
-        } catch (final UnsupportedOperationException expected) {
-            // expected result
-        }
+        assertThrows(UnsupportedOperationException.class, () -> dynaClass.add(null, String.class, true, true));
     }
 
     /**
      * Test add(name) method when restricted is set to 'true'
      */
+    @Test
     public void testAddPropertyRestricted1() {
         dynaClass.setRestricted(true);
-        assertTrue("MutableDynaClass is restricted", dynaClass.isRestricted());
-        try {
-            dynaClass.add(testProperty);
-            fail("add(name) did not throw IllegalStateException");
-        } catch (final IllegalStateException expected) {
-            // expected result
-        }
+        assertTrue(dynaClass.isRestricted(), "MutableDynaClass is restricted");
+        assertThrows(IllegalStateException.class, () -> dynaClass.add(testProperty));
     }
 
     /**
      * Test add(name, type) method when restricted is set to 'true'
      */
+    @Test
     public void testAddPropertyRestricted2() {
         dynaClass.setRestricted(true);
-        assertTrue("MutableDynaClass is restricted", dynaClass.isRestricted());
-        try {
-            dynaClass.add(testProperty, String.class);
-            fail("add(name, type) did not throw IllegalStateException");
-        } catch (final IllegalStateException expected) {
-            // expected result
-        }
+        assertTrue(dynaClass.isRestricted(), "MutableDynaClass is restricted");
+        assertThrows(IllegalStateException.class, () -> dynaClass.add(testProperty, String.class));
     }
 
     /**
      * Test add(name, type, readable, writable) method when restricted is set to 'true'
      */
+    @Test
     public void testAddPropertyRestricted3() {
         dynaClass.setRestricted(true);
-        assertTrue("MutableDynaClass is restricted", dynaClass.isRestricted());
-        try {
-            dynaClass.add(testProperty, String.class, true, true);
-            fail("add(name, type, readable, writable) did not throw UnsupportedOperationException");
-        } catch (final UnsupportedOperationException t) {
-            // expected result
-        }
+        assertTrue(dynaClass.isRestricted(), "MutableDynaClass is restricted");
+        assertThrows(UnsupportedOperationException.class, () -> dynaClass.add(testProperty, String.class, true, true));
     }
 
     /**
      * Test retrieving a property which doesn't exist (returnNull is 'false')
      */
+    @Test
     public void testGetPropertyDoesntExist1() {
         dynaClass.setReturnNull(false);
-        assertFalse("returnNull is 'false'", dynaClass.isReturnNull());
+        assertFalse(dynaClass.isReturnNull(), "returnNull is 'false'");
         final DynaProperty dynaProperty = dynaClass.getDynaProperty(testProperty);
-        assertEquals("name is correct", testProperty, dynaProperty.getName());
-        assertEquals("type is correct", Object.class, dynaProperty.getType());
-        assertFalse("property doesn't exist", dynaClass.isDynaProperty(testProperty));
+        assertEquals(testProperty, dynaProperty.getName(), "name is correct");
+        assertEquals(Object.class, dynaProperty.getType(), "type is correct");
+        assertFalse(dynaClass.isDynaProperty(testProperty), "property doesn't exist");
     }
 
     /**
      * Test retrieving a property which doesn't exist (returnNull is 'true')
      */
+    @Test
     public void testGetPropertyDoesntExist2() {
         dynaClass.setReturnNull(true);
-        assertTrue("returnNull is 'true'", dynaClass.isReturnNull());
-        assertNull("property is null", dynaClass.getDynaProperty(testProperty));
+        assertTrue(dynaClass.isReturnNull(), "returnNull is 'true'");
+        assertNull(dynaClass.getDynaProperty(testProperty), "property is null");
     }
 
     /**
      * Test removing a property
      */
+    @Test
     public void testRemoveProperty() {
         dynaClass.setReturnNull(true);
         dynaClass.add(testProperty);
-        assertTrue("Property exists", dynaClass.isDynaProperty(testProperty));
-        assertNotNull("property is Not null", dynaClass.getDynaProperty(testProperty));
+        assertTrue(dynaClass.isDynaProperty(testProperty), "Property exists");
+        assertNotNull(dynaClass.getDynaProperty(testProperty), "property is Not null");
         dynaClass.remove(testProperty);
-        assertFalse("Property doesn't exist", dynaClass.isDynaProperty(testProperty));
-        assertNull("property is null", dynaClass.getDynaProperty(testProperty));
+        assertFalse(dynaClass.isDynaProperty(testProperty), "Property doesn't exist");
+        assertNull(dynaClass.getDynaProperty(testProperty), "property is null");
     }
 
     /**
      * Test removing a property which doesn't exist
      */
+    @Test
     public void testRemovePropertyDoesntExist() {
-        assertFalse("property doesn't exist", dynaClass.isDynaProperty(testProperty));
+        assertFalse(dynaClass.isDynaProperty(testProperty), "property doesn't exist");
         dynaClass.remove(testProperty);
-        assertFalse("property still doesn't exist", dynaClass.isDynaProperty(testProperty));
+        assertFalse(dynaClass.isDynaProperty(testProperty), "property still doesn't exist");
     }
 
     /**
      * Test removing a property, name is null
      */
+    @Test
     public void testRemovePropertyNullName() {
-        try {
-            dynaClass.remove(null);
-            fail("remove(null) did not throw IllegalArgumentException");
-        } catch (final IllegalArgumentException expected) {
-            // expected result
-        }
+        assertThrows(NullPointerException.class, () -> dynaClass.remove(null));
     }
 
     /**
      * Test removing a property, DynaClass is restricted
      */
+    @Test
     public void testRemovePropertyRestricted() {
         dynaClass.add(testProperty);
-        assertTrue("Property exists", dynaClass.isDynaProperty(testProperty));
+        assertTrue(dynaClass.isDynaProperty(testProperty), "Property exists");
         dynaClass.setRestricted(true);
-        assertTrue("MutableDynaClass is restricted", dynaClass.isRestricted());
-        try {
-            dynaClass.remove(testProperty);
-            fail("remove property when MutableDynaClassis restricted did not throw IllegalStateException");
-        } catch (final IllegalStateException expected) {
-            // expected result
-        }
+        assertTrue(dynaClass.isRestricted(), "MutableDynaClass is restricted");
+        assertThrows(IllegalStateException.class, () -> dynaClass.remove(testProperty));
     }
 }

@@ -23,30 +23,10 @@ import java.util.Calendar;
 import org.apache.commons.beanutils2.converters.AbstractDateConverterTest;
 import org.apache.commons.beanutils2.converters.DateTimeConverter;
 
-import junit.framework.TestSuite;
-
 /**
  * Test Case for the {@link SqlDateConverter} class.
  */
 public class SqlDateConverterTestCase extends AbstractDateConverterTest<Date> {
-
-    /**
-     * Create Test Suite
-     *
-     * @return test suite
-     */
-    public static TestSuite suite() {
-        return new TestSuite(SqlDateConverterTestCase.class);
-    }
-
-    /**
-     * Constructs a new Date test case.
-     *
-     * @param name Test Name
-     */
-    public SqlDateConverterTestCase(final String name) {
-        super(name);
-    }
 
     /**
      * Gets the expected type

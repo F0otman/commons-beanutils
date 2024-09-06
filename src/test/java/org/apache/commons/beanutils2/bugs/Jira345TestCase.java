@@ -16,16 +16,17 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
-import org.apache.commons.beanutils2.BeanUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.commons.beanutils2.BeanUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-345">https://issues.apache.org/jira/browse/BEANUTILS-345</a>
  */
-public class Jira345TestCase extends TestCase {
+public class Jira345TestCase {
 
     /** Example Bean */
     public static class MyBean {
@@ -52,40 +53,12 @@ public class Jira345TestCase extends TestCase {
     }
 
     /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira345TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira345TestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -93,14 +66,14 @@ public class Jira345TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Test {@link BeanUtils} setProperty() with 2D array.
      */
+    @Test
     public void testBeanUtilsSetProperty_2DArray() throws Exception {
         final MyBean myBean = new MyBean();
         BeanUtils.setProperty(myBean, "matr[0][0]", "Sample");
@@ -110,6 +83,7 @@ public class Jira345TestCase extends TestCase {
     /**
      * Test {@link BeanUtils} setProperty() with 3D array.
      */
+    @Test
     public void testBeanUtilsSetProperty_3DArray() throws Exception {
         final MyBean myBean = new MyBean();
         BeanUtils.setProperty(myBean, "matr3D[0][0][0]", "Sample");

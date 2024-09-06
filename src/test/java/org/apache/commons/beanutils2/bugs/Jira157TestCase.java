@@ -16,6 +16,9 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -24,17 +27,16 @@ import org.apache.commons.beanutils2.BeanUtilsBean;
 import org.apache.commons.beanutils2.SuppressPropertiesBeanIntrospector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Beanutils's describe() method cannot determine reader methods for anonymous class - see Jira issue# BEANUTILS-157.
  *
  * See <a href="https://issues.apache.org/jira/browse/BEANUTILS-157">https://issues.apache.org/jira/browse/BEANUTILS-157<a/>
  */
-public class Jira157TestCase extends TestCase {
+public class Jira157TestCase {
 
     public static class FooBar {
         String getPackageFoo() {
@@ -64,40 +66,12 @@ public class Jira157TestCase extends TestCase {
     private static final Log LOG = LogFactory.getLog(Jira157TestCase.class);
 
     /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira157TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira157TestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
 
         final BeanUtilsBean custom = new BeanUtilsBean();
         custom.getPropertyUtils().removeBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
@@ -109,9 +83,8 @@ public class Jira157TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
@@ -119,19 +92,15 @@ public class Jira157TestCase extends TestCase {
      * <p />
      * See Jira issue# BEANUTILS-157.
      */
-    public void testIssue_BEANUTILS_157_BeanUtils_Describe_Bean() {
+    @Test
+    public void testIssue_BEANUTILS_157_BeanUtils_Describe_Bean() throws Exception {
         final Object bean = new FooBar();
         Map<String, String> result = null;
-        try {
-            result = BeanUtils.describe(bean);
-        } catch (final Throwable t) {
-            LOG.error("Describe Bean: " + t.getMessage(), t);
-            fail("Describe Bean Threw exception: " + t);
-        }
-        assertEquals("Check Size", 2, result.size());
-        assertTrue("Class", result.containsKey("class"));
-        assertTrue("publicFoo Key", result.containsKey("publicFoo"));
-        assertEquals("publicFoo Value", "PublicFoo Value", result.get("publicFoo"));
+        result = BeanUtils.describe(bean);
+        assertEquals(2, result.size(), "Check Size");
+        assertTrue(result.containsKey("class"), "Class");
+        assertTrue(result.containsKey("publicFoo"), "publicFoo Key");
+        assertEquals("PublicFoo Value", result.get("publicFoo"), "publicFoo Value");
     }
 
     /**
@@ -139,7 +108,8 @@ public class Jira157TestCase extends TestCase {
      * <p />
      * See Jira issue# BEANUTILS-157.
      */
-    public void testIssue_BEANUTILS_157_BeanUtils_Describe_Interface() {
+    @Test
+    public void testIssue_BEANUTILS_157_BeanUtils_Describe_Interface() throws Exception {
         final Object bean = new XY() {
             @Override
             public String getX() {
@@ -151,19 +121,13 @@ public class Jira157TestCase extends TestCase {
                 return "y-value";
             }
         };
-        Map<String, String> result = null;
-        try {
-            result = BeanUtils.describe(bean);
-        } catch (final Throwable t) {
-            LOG.error("Describe Interface: " + t.getMessage(), t);
-            fail("Describe Interface Threw exception: " + t);
-        }
-        assertEquals("Check Size", 3, result.size());
-        assertTrue("Class", result.containsKey("class"));
-        assertTrue("X Key", result.containsKey("x"));
-        assertTrue("Y Key", result.containsKey("y"));
-        assertEquals("X Value", "x-value", result.get("x"));
-        assertEquals("Y Value", "y-value", result.get("y"));
+        final Map<String, String> result = BeanUtils.describe(bean);
+        assertEquals(3, result.size(), "Check Size");
+        assertTrue(result.containsKey("class"), "Class");
+        assertTrue(result.containsKey("x"), "X Key");
+        assertTrue(result.containsKey("y"), "Y Key");
+        assertEquals("x-value", result.get("x"), "X Value");
+        assertEquals("y-value", result.get("y"), "Y Value");
     }
 
     /**
@@ -171,7 +135,8 @@ public class Jira157TestCase extends TestCase {
      * <p />
      * See Jira issue# BEANUTILS-157.
      */
-    public void testIssue_BEANUTILS_157_BeanUtils_Describe_Serializable() {
+    @Test
+    public void testIssue_BEANUTILS_157_BeanUtils_Describe_Serializable() throws Exception {
         final Object bean = new Serializable() {
             private static final long serialVersionUID = 1L;
 
@@ -185,14 +150,8 @@ public class Jira157TestCase extends TestCase {
                 return "y-value";
             }
         };
-        Map<String, String> result = null;
-        try {
-            result = BeanUtils.describe(bean);
-        } catch (final Throwable t) {
-            LOG.error("Describe Serializable: " + t.getMessage(), t);
-            fail("Describe Serializable Threw exception: " + t);
-        }
-        assertEquals("Check Size", 1, result.size());
-        assertTrue("Class", result.containsKey("class"));
+        final Map<String, String> result = BeanUtils.describe(bean);
+        assertEquals(1, result.size(), "Check Size");
+        assertTrue(result.containsKey("class"), "Class");
     }
 }

@@ -17,13 +17,16 @@
 
 package org.apache.commons.beanutils2;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for {@code BeanToPropertyValueTransformer}.
- *
  */
-public class BeanToPropertyValueTransformerTestCase extends TestCase {
+public class BeanToPropertyValueTransformerTestCase {
 
     private static final Integer expectedIntegerValue = Integer.valueOf(123);
     private static final Long expectedLongValue = Long.valueOf(123);
@@ -33,48 +36,31 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     private static final Byte expectedByteValue = Byte.valueOf("12");
 
     /**
-     * Constructor for BeanToPropertyValueTransformerTestCase.
-     *
-     * @param name Name of this test case.
-     */
-    public BeanToPropertyValueTransformerTestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Test transform with indexed property.
      */
+    @Test
     public void testTransformWithIndexedProperty() {
-        BeanToPropertyValueTransformer<TestBean, Integer> transformer = new BeanToPropertyValueTransformer<>("intIndexed[0]");
+        final BeanToPropertyValueTransformer<TestBean, Integer> transformer = new BeanToPropertyValueTransformer<>("intIndexed[0]");
         final TestBean testBean = new TestBean();
         testBean.setIntIndexed(0, expectedIntegerValue.intValue());
         assertEquals(expectedIntegerValue, transformer.apply(testBean));
-
         // test index out of range
-        transformer = new BeanToPropertyValueTransformer<>("intIndexed[9999]");
-
-        try {
-            transformer.apply(testBean);
-            fail("Should have thrown an ArrayIndexOutOfBoundsException");
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            /* this is what should happen */
-        }
+        final BeanToPropertyValueTransformer<TestBean, Integer> transformer2 = new BeanToPropertyValueTransformer<>("intIndexed[9999]");
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> transformer2.apply(testBean));
     }
 
     /**
      * Test transform with invalid property.
      */
+    @Test
     public void testTransformWithInvalidProperty() {
-        try {
-            new BeanToPropertyValueTransformer<>("bogusProperty").apply(new TestBean());
-        } catch (final IllegalArgumentException e) {
-            /* This is what should happen */
-        }
+        assertThrows(IllegalArgumentException.class, () -> new BeanToPropertyValueTransformer<>("bogusProperty").apply(new TestBean()));
     }
 
     /**
      * Test transform with mapped property.
      */
+    @Test
     public void testTransformWithMappedProperty() {
         BeanToPropertyValueTransformer<TestBean, String> transformer = new BeanToPropertyValueTransformer<>("mappedProperty(test-key)");
         final TestBean testBean = new TestBean();
@@ -85,12 +71,13 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
 
         // now try an invalid key
         transformer = new BeanToPropertyValueTransformer<>("mappedProperty(bogus-key)");
-        assertEquals(null, transformer.apply(testBean));
+        assertNull(transformer.apply(testBean));
     }
 
     /**
      * Test transform with nested indexed property.
      */
+    @Test
     public void testTransformWithNestedIndexedProperty() {
         final BeanToPropertyValueTransformer<TestBean, Integer> transformer = new BeanToPropertyValueTransformer<>("anotherNested.intIndexed[0]");
         final TestBean testBean = new TestBean();
@@ -103,6 +90,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with nested property.
      */
+    @Test
     public void testTransformWithNestedProperty() {
         final BeanToPropertyValueTransformer<TestBean, String> transformer = new BeanToPropertyValueTransformer<>("anotherNested.stringProperty");
         final TestBean testBean = new TestBean();
@@ -114,28 +102,25 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with null in property path.
      */
+    @Test
     public void testTransformWithNullInPath() {
         final BeanToPropertyValueTransformer<TestBean, String> transformer = new BeanToPropertyValueTransformer<>("anotherNested.stringProperty");
-
-        try {
-            transformer.apply(new TestBean());
-            fail("Should have throw IllegalArgumentException");
-        } catch (final IllegalArgumentException e) {
-            /* ignore this is what should happen */
-        }
+        assertThrows(IllegalArgumentException.class, () -> transformer.apply(new TestBean()));
     }
 
     /**
      * Test transform with null in property path and ignore = true.
      */
+    @Test
     public void testTransformWithNullInPathAndIgnoreTrue() {
         final BeanToPropertyValueTransformer<TestBean, String> transformer = new BeanToPropertyValueTransformer<>("anotherNested.stringProperty", true);
-        assertEquals(null, transformer.apply(new TestBean()));
+        assertNull(transformer.apply(new TestBean()));
     }
 
     /**
      * Test transform with read only property.
      */
+    @Test
     public void testTransformWithReadOnlyProperty() {
         final BeanToPropertyValueTransformer<TestBean, String> transformer = new BeanToPropertyValueTransformer<>("readOnlyProperty");
         final TestBean testBean = new TestBean();
@@ -145,6 +130,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with simple boolean property.
      */
+    @Test
     public void testTransformWithSimpleBooleanProperty() {
         final BeanToPropertyValueTransformer<TestBean, Boolean> transformer = new BeanToPropertyValueTransformer<>("booleanProperty");
         final TestBean testBean = new TestBean(expectedBooleanValue.booleanValue());
@@ -154,6 +140,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with simple byte property.
      */
+    @Test
     public void testTransformWithSimpleByteProperty() {
         final BeanToPropertyValueTransformer<TestBean, Byte> transformer = new BeanToPropertyValueTransformer<>("byteProperty");
         final TestBean testBean = new TestBean();
@@ -164,6 +151,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with simple double property.
      */
+    @Test
     public void testTransformWithSimpleDoubleProperty() {
         final BeanToPropertyValueTransformer<TestBean, Double> transformer = new BeanToPropertyValueTransformer<>("doubleProperty");
         final TestBean testBean = new TestBean(expectedDoubleValue.doubleValue());
@@ -173,6 +161,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with simple float property.
      */
+    @Test
     public void testTransformWithSimpleFloatProperty() {
         final BeanToPropertyValueTransformer<TestBean, Float> transformer = new BeanToPropertyValueTransformer<>("floatProperty");
         final TestBean testBean = new TestBean(expectedFloatValue.floatValue());
@@ -182,6 +171,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with simple int property.
      */
+    @Test
     public void testTransformWithSimpleIntProperty() {
         final BeanToPropertyValueTransformer<TestBean, Integer> transformer = new BeanToPropertyValueTransformer<>("intProperty");
         final TestBean testBean = new TestBean(expectedIntegerValue.intValue());
@@ -191,6 +181,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with simple long property.
      */
+    @Test
     public void testTransformWithSimpleLongProperty() {
         final BeanToPropertyValueTransformer<TestBean, Long> transformer = new BeanToPropertyValueTransformer<>("longProperty");
         final TestBean testBean = new TestBean();
@@ -201,6 +192,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with simple String property.
      */
+    @Test
     public void testTransformWithSimpleStringProperty() {
         final BeanToPropertyValueTransformer<TestBean, String> transformer = new BeanToPropertyValueTransformer<>("stringProperty");
         final TestBean testBean = new TestBean("foo");
@@ -209,8 +201,8 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
 
     /**
      * Test transform with simple String property and null value.
-     *
      */
+    @Test
     public void testTransformWithSimpleStringPropertyAndNullValue() {
         final BeanToPropertyValueTransformer<TestBean, String> transformer = new BeanToPropertyValueTransformer<>("stringProperty");
         final TestBean testBean = new TestBean((String) null);
@@ -220,6 +212,7 @@ public class BeanToPropertyValueTransformerTestCase extends TestCase {
     /**
      * Test transform with write only property.
      */
+    @Test
     public void testTransformWithWriteOnlyProperty() {
         try {
             new BeanToPropertyValueTransformer<>("writeOnlyProperty").apply(new TestBean());

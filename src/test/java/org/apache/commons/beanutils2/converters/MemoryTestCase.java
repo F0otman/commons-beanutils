@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference;
 
 import org.apache.commons.beanutils2.ConvertUtils;
 import org.apache.commons.beanutils2.Converter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class provides a number of unit tests related to class loaders and garbage collection, particularly in j2ee-like situations.
@@ -38,7 +38,7 @@ public class MemoryTestCase {
      * Attempt to force garbage collection of the specified target.
      *
      * <p>
-     * Unfortunately there is no way to force a JVM to perform garbage collection; all we can do is <i>hint</i> to it that garbage-collection would be a good
+     * Unfortunately there is no way to force a JVM to perform garbage collection; all we can do is <em>hint</em> to it that garbage-collection would be a good
      * idea, and to consume memory in order to trigger it.
      * </p>
      *
@@ -65,7 +65,7 @@ public class MemoryTestCase {
             try {
                 @SuppressWarnings("unused")
                 final byte[] b = new byte[bytes];
-                bytes = bytes * 2;
+                bytes *= 2;
             } catch (final OutOfMemoryError e) {
                 // well that sure should have forced a garbage collection
                 // run to occur!
@@ -74,7 +74,7 @@ public class MemoryTestCase {
         }
 
         // and let's do one more just to clean up any garbage we might have
-        // created on the last pass..
+        // created on the last pass.
         System.gc();
     }
 
@@ -88,7 +88,6 @@ public class MemoryTestCase {
      * <li>should not be visible to other components; and</li>
      * <li>should not prevent the component-specific classloader from being garbage-collected when the container sets its reference to null.
      * </ul>
-     *
      */
     @Test
     public void testComponentRegistersCustomConverter() throws Exception {
@@ -157,7 +156,7 @@ public class MemoryTestCase {
         } finally {
             // Restore context classloader that was present before this
             // test started. It is expected to be the same as the system
-            // classloader, but we handle all cases here..
+            // classloader, but we handle all cases here.
             Thread.currentThread().setContextClassLoader(origContextClassLoader);
 
             // and restore all the standard converters
@@ -175,7 +174,6 @@ public class MemoryTestCase {
      * <li>should not be visible to other components; and</li>
      * <li>should not prevent the component-specific classloader from being garbage-collected when the container sets its reference to null.
      * </ul>
-     *
      */
     @Test
     public void testComponentRegistersStandardConverter() throws Exception {
@@ -204,7 +202,7 @@ public class MemoryTestCase {
 
                 // When we first do a ConvertUtils operation inside a custom
                 // classloader, we get a completely fresh copy of the
-                // ConvertUtilsBean, with all-new Converter objects in it..
+                // ConvertUtilsBean, with all-new Converter objects in it.
                 assertFalse(ConvertUtils.lookup(Float.TYPE) == origFloatConverter);
 
                 // Now we register a custom converter (but of a standard class).
@@ -268,7 +266,7 @@ public class MemoryTestCase {
         } finally {
             // Restore context classloader that was present before this
             // test started. It is expected to be the same as the system
-            // classloader, but we handle all cases here..
+            // classloader, but we handle all cases here.
             Thread.currentThread().setContextClassLoader(origContextClassLoader);
 
             // and restore all the standard converters

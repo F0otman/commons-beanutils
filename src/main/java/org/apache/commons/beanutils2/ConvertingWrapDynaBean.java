@@ -20,7 +20,7 @@ package org.apache.commons.beanutils2;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * <p>Implementation of {@code DynaBean} that wraps a standard JavaBean
+ * <p>Implements {@link DynaBean} to wrap a standard JavaBean
  * instance, so that DynaBean APIs can be used to access its properties,
  * though this implementation allows type conversion to occur when properties are set.
  * This means that (say) Strings can be passed in as values in setter methods and
@@ -28,9 +28,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation does not
  * support the {@code contains()</code> and <code>remove()} methods.</p>
- *
  */
-
 public class ConvertingWrapDynaBean extends WrapDynaBean {
 
     private static final long serialVersionUID = 1L;
@@ -42,9 +40,7 @@ public class ConvertingWrapDynaBean extends WrapDynaBean {
      * @param instance JavaBean instance to be wrapped
      */
     public ConvertingWrapDynaBean(final Object instance) {
-
         super(instance);
-
     }
 
     /**
@@ -60,20 +56,13 @@ public class ConvertingWrapDynaBean extends WrapDynaBean {
      */
     @Override
     public void set(final String name, final Object value) {
-
         try {
             BeanUtils.copyProperty(instance, name, value);
         } catch (final InvocationTargetException ite) {
             final Throwable cause = ite.getTargetException();
-            throw new IllegalArgumentException
-                    ("Error setting property '" + name +
-                              "' nested exception - " + cause);
+            throw new IllegalArgumentException("Error setting property '" + name + "' nested exception - " + cause);
         } catch (final Throwable t) {
-            final IllegalArgumentException iae = new IllegalArgumentException
-                    ("Error setting property '" + name +
-                              "', exception - " + t);
-            BeanUtils.initCause(iae, t);
-            throw iae;
+            throw new IllegalArgumentException("Error setting property '" + name + "', exception - " + t, t);
         }
 
     }

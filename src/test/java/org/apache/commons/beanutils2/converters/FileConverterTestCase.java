@@ -17,28 +17,23 @@
 
 package org.apache.commons.beanutils2.converters;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 
 import org.apache.commons.beanutils2.ConversionException;
 import org.apache.commons.beanutils2.Converter;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Case for the FileConverter class.
  */
-public class FileConverterTestCase extends TestCase {
-
-    public static TestSuite suite() {
-        return new TestSuite(FileConverterTestCase.class);
-    }
+public class FileConverterTestCase {
 
     private Converter<File> converter;
-
-    public FileConverterTestCase(final String name) {
-        super(name);
-    }
 
     protected Class<?> getExpectedType() {
         return File.class;
@@ -48,16 +43,17 @@ public class FileConverterTestCase extends TestCase {
         return new FileConverter();
     }
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         converter = makeConverter();
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         converter = null;
     }
 
+    @Test
     public void testSimpleConversion() throws Exception {
         final String[] message = { "from String", "from String", "from String" };
 
@@ -66,20 +62,16 @@ public class FileConverterTestCase extends TestCase {
         final File[] expected = { new File("/tmp"), new File("/tmp/foo.txt"), new File("/tmp/does/not/exist.foo") };
 
         for (int i = 0; i < expected.length; i++) {
-            assertEquals(message[i] + " to File", expected[i], converter.convert(File.class, input[i]));
-            assertEquals(message[i] + " to null type", expected[i], converter.convert(null, input[i]));
+            assertEquals(expected[i], converter.convert(File.class, input[i]), message[i] + " to File");
+            assertEquals(expected[i], converter.convert(null, input[i]), message[i] + " to null type");
         }
     }
 
     /**
      * Tries a conversion to an unsupported target type.
      */
+    @Test
     public void testUnsupportedTargetType() {
-        try {
-            converter.convert(Integer.class, "/tmp");
-            fail("Could convert to unsupported type!");
-        } catch (final ConversionException cex) {
-            // expected result
-        }
+        assertThrows(ConversionException.class, () -> converter.convert(Integer.class, "/tmp"));
     }
 }

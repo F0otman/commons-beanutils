@@ -17,32 +17,32 @@
 package org.apache.commons.beanutils2;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * <p>Provides a <i>light weight</i> {@code DynaBean</code> facade to a <code>Map}
- *  with <i>lazy</i> map/list processing.</p>
+ * <p>Provides a <em>light weight</em> {@code DynaBean</code> facade to a <code>Map}
+ *  with <em>lazy</em> map/list processing.</p>
  *
- * <p>Its a <i>light weight</i> {@code DynaBean} implementation because there is no
+ * <p>Its a <em>light weight</em> {@code DynaBean} implementation because there is no
  *    actual {@code DynaClass</code> associated with this <code>DynaBean} - in fact
- *    it implements the {@code DynaClass} interface itself providing <i>pseudo</i> DynaClass
+ *    it implements the {@code DynaClass} interface itself providing <em>pseudo</em> DynaClass
  *    behavior from the actual values stored in the {@code Map}.</p>
  *
  * <p>As well providing rhe standard {@code DynaBean</code> access to the <code>Map}'s properties
- *    this class also provides the usual <i>Lazy</i> behavior:</p>
+ *    this class also provides the usual <em>Lazy</em> behavior:</p>
  *    <ul>
  *       <li>Properties don't need to be pre-defined in a {@code DynaClass}</li>
  *       <li>Indexed properties ({@code Lists</code> or <code>Arrays}) are automatically instantiated
- *           and <i>grown</i> so that they are large enough to cater for the index being set.</li>
+ *           and <em>grown</em> so that they are large enough to cater for the index being set.</li>
  *       <li>Mapped properties are automatically instantiated.</li>
  *    </ul>
  *
- * <p><b><u><i>Restricted</i> DynaClass</u></b></p>
+ * <p><b><u><em>Restricted</em> DynaClass</u></b></p>
  *    <p>This class implements the {@code MutableDynaClass} interface.
- *       {@code MutableDynaClass</code> have a facility to <i>restrict</i> the <code>DynaClass}
+ *       {@code MutableDynaClass</code> have a facility to <em>restrict</em> the <code>DynaClass}
  *       so that its properties cannot be modified. If the {@code MutableDynaClass} is
  *       restricted then calling any of the {@code set()} methods for a property which
  *       doesn't exist will result in a {@code IllegalArgumentException} being thrown.</p>
- *
  */
 public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
 
@@ -175,20 +175,12 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      */
     @Override
     public void add(final String name, final Class<?> type) {
-        if (name == null) {
-            throw new IllegalArgumentException("Property name is missing.");
-        }
-
+        Objects.requireNonNull(name, "name");
         if (isRestricted()) {
             throw new IllegalStateException("DynaClass is currently restricted. No new properties can be added.");
         }
-
-        final Object value = values.get(name);
-
         // Check if the property already exists
-        if (value == null) {
-            values.put(name, type == null ? null : createProperty(name, type));
-        }
+        values.computeIfAbsent(name, k -> type == null ? null : createProperty(name, type));
     }
 
     /**
@@ -254,7 +246,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      *
      * <p>The reason for not returning a {@code null} property descriptor is that
      *    {@code BeanUtils} uses this method to check if a property exists
-     *    before trying to set it - since these <i>Map</i> implementations automatically
+     *    before trying to set it - since these <em>Map</em> implementations automatically
      *    add any new properties when they are set, returning {@code null} from
      *    this method would defeat their purpose.</p>
      *
@@ -266,18 +258,13 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      */
     @Override
     public DynaProperty getDynaProperty(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Property name is missing.");
-        }
-
+        Objects.requireNonNull(name, "name");
         final Object value = values.get(name);
-
         // If it doesn't exist and returnNull is false
         // create a new DynaProperty
         if (value == null && isReturnNull()) {
             return null;
         }
-
         if (value == null) {
             return new DynaProperty(name);
         }
@@ -320,11 +307,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
          */
         @Override
         protected boolean isDynaProperty(final String name) {
-            if (name == null) {
-                throw new IllegalArgumentException("Property name is missing.");
-            }
-
-            return values.containsKey(name);
+            return values.containsKey(Objects.requireNonNull(name, "name"));
         }
 
     /**
@@ -373,7 +356,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
 
         // Crate new LazyDynaMap and initialize properties
         final LazyDynaMap lazyMap = new LazyDynaMap(newMap);
-        final DynaProperty[] properties = this.getDynaProperties();
+        final DynaProperty[] properties = getDynaProperties();
         if (properties != null) {
             for (final DynaProperty property : properties) {
                 lazyMap.add(property);
@@ -397,14 +380,10 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      */
     @Override
     public void remove(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Property name is missing.");
-        }
-
+        Objects.requireNonNull(name, "name");
         if (isRestricted()) {
             throw new IllegalStateException("DynaClass is currently restricted. No properties can be removed.");
         }
-
         values.remove(name);
     }
 
@@ -420,7 +399,6 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
             throw new IllegalArgumentException
                     ("Invalid property name '" + name + "' (DynaClass is restricted)");
         }
-
         values.put(name, value);
     }
 

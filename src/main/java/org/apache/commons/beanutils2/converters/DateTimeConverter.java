@@ -38,7 +38,7 @@ import org.apache.commons.beanutils2.ConversionException;
  * that handles conversion to and from <b>date/time</b> objects.
  * <p>
  * This implementation handles conversion for the following
- * <i>date/time</i> types.
+ * <em>date/time</em> types.
  * <ul>
  *     <li>{@link java.util.Date}</li>
  *     <li>{@link java.util.Calendar}</li>
@@ -101,14 +101,14 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
     private boolean useLocaleFormat;
 
     /**
-     * Constructs a Date/Time <i>Converter</i> that throws a
+     * Constructs a Date/Time <em>Converter</em> that throws a
      * {@code ConversionException} if an error occurs.
      */
     public DateTimeConverter() {
     }
 
     /**
-     * Constructs a Date/Time <i>Converter</i> that returns a default
+     * Constructs a Date/Time <em>Converter</em> that returns a default
      * value if an error occurs.
      *
      * @param defaultValue The default value to be returned
@@ -126,7 +126,7 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
      * one or more patterns (using {@code setPatterns()}), then
      * the first pattern will be used to format the date into a String.
      * Otherwise the default {@code DateFormat} for the default locale
-     * (and <i>style</i> if configured) will be used.
+     * (and <em>style</em> if configured) will be used.
      *
      * @param value The input value to be converted
      * @return the converted String value.
@@ -142,16 +142,16 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
         } else if (value instanceof Long) {
             date = new Date(((Long) value).longValue());
         } else if (value instanceof LocalDateTime) {
-            date = java.sql.Timestamp.valueOf(((LocalDateTime) value));
+            date = java.sql.Timestamp.valueOf((LocalDateTime) value);
         } else if (value instanceof LocalDate) {
-            date = java.sql.Date.valueOf(((LocalDate) value));
+            date = java.sql.Date.valueOf((LocalDate) value);
         } else if (value instanceof ZonedDateTime) {
             date = Date.from(((ZonedDateTime) value).toInstant());
         } else if (value instanceof OffsetDateTime) {
             date = Date.from(((OffsetDateTime) value).toInstant());
         } else if (value instanceof TemporalAccessor) {
             // Backstop for other TemporalAccessor implementations.
-            date = Date.from(Instant.from(((TemporalAccessor) value)));
+            date = Date.from(Instant.from((TemporalAccessor) value));
         }
 
         String result = null;
@@ -202,7 +202,7 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
      * with one or more patterns (using {@code setPatterns()}), then
      * the conversion is attempted with each of the specified patterns.
      * Otherwise the default {@code DateFormat} for the default locale
-     * (and <i>style</i> if configured) will be used.
+     * (and <em>style</em> if configured) will be used.
      *
      * @param <T> The desired target type of the conversion.
      * @param targetType Data type to which this value should be converted.
@@ -221,7 +221,7 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
             //      didn't include the milliseconds. The following code
             //      ensures it works consistently across JDK versions
             final java.sql.Timestamp timestamp = (java.sql.Timestamp)value;
-            long timeInMillis = ((timestamp.getTime() / 1000) * 1000);
+            long timeInMillis = timestamp.getTime() / 1000 * 1000;
             timeInMillis += timestamp.getNanos() / 1000000;
 
             return toDate(targetType, timeInMillis);
@@ -329,7 +329,7 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
     }
 
     /**
-     * Gets the Locale for the <i>Converter</i>
+     * Gets the Locale for the <em>Converter</em>
      * (or {@code null} if none specified).
      *
      * @return The locale to use for conversion
@@ -449,7 +449,7 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
         format.setLenient(false);
         final ParsePosition pos = new ParsePosition(0);
         final Date parsedDate = format.parse(value, pos); // ignore the result (use the Calendar)
-        int errorIndex = pos.getErrorIndex();
+        final int errorIndex = pos.getErrorIndex();
         if (errorIndex >= 0 || pos.getIndex() != value.length() || parsedDate == null) {
             String msg = "Error converting '" + toString(sourceType) + "' to '" + toString(targetType) + "'";
             if (format instanceof SimpleDateFormat) {
@@ -466,7 +466,7 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
     }
 
     /**
-     * Sets the Locale for the <i>Converter</i>.
+     * Sets the Locale for the <em>Converter</em>.
      *
      * @param locale The Locale.
      */
@@ -522,7 +522,7 @@ public abstract class DateTimeConverter<D> extends AbstractConverter<D> {
 
     /**
      * Convert a long value to the specified Date type for this
-     * <i>Converter</i>.
+     * <em>Converter</em>.
      * <p>
      *
      * This method handles conversion to the following types:

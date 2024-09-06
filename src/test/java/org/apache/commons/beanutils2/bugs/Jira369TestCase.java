@@ -16,16 +16,18 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
-import org.apache.commons.beanutils2.BeanUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.commons.beanutils2.BeanUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-369">https://issues.apache.org/jira/browse/BEANUTILS-369</a>
  */
-public class Jira369TestCase extends TestCase {
+public class Jira369TestCase {
 
     /**
      * Test Bean
@@ -52,40 +54,12 @@ public class Jira369TestCase extends TestCase {
     }
 
     /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira369TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira369TestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -93,51 +67,37 @@ public class Jira369TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Test {@link BeanUtils} getProperty() for property "aRatedCd".
      */
+    @Test
     public void testBeanUtilsGetProperty_aRatedCd() throws Exception {
         final TestBean bean = new TestBean();
         bean.setARatedCd("foo");
-
-        try {
-            assertEquals("foo", BeanUtils.getProperty(bean, "aRatedCd"));
-            fail("Expected NoSuchMethodException");
-        } catch (final NoSuchMethodException e) {
-            // expected result
-        } catch (final Exception e) {
-            fail("Threw " + e);
-        }
+        assertThrows(NoSuchMethodException.class, () -> assertEquals("foo", BeanUtils.getProperty(bean, "aRatedCd")));
     }
 
     /**
      * Test {@link BeanUtils} getProperty() for property "ARatedCd".
      */
+    @Test
     public void testBeanUtilsGetProperty_ARatedCd() throws Exception {
         final TestBean bean = new TestBean();
         bean.setARatedCd("foo");
-        try {
-            assertEquals("foo", BeanUtils.getProperty(bean, "ARatedCd"));
-        } catch (final Exception e) {
-            fail("Threw " + e);
-        }
+        assertEquals("foo", BeanUtils.getProperty(bean, "ARatedCd"));
     }
 
     /**
      * Test {@link BeanUtils} getProperty() for property "bRatedCd".
      */
+    @Test
     public void testBeanUtilsGetProperty_bRatedCd() throws Exception {
         final TestBean bean = new TestBean();
         bean.setbRatedCd("foo");
-        try {
-            assertEquals("foo", BeanUtils.getProperty(bean, "bRatedCd"));
-        } catch (final Exception e) {
-            fail("Threw " + e);
-        }
+        assertEquals("foo", BeanUtils.getProperty(bean, "bRatedCd"));
     }
 }

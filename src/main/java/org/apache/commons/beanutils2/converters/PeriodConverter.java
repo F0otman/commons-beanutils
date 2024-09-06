@@ -22,7 +22,7 @@ import java.time.Period;
  * {@link org.apache.commons.beanutils2.Converter} implementation that handles conversion
  * to and from <b>java.time.Period</b> objects.
  * <p>
- * Can be configured to either return a <i>default value</i> or throw a
+ * Can be configured to either return a <em>default value</em> or throw a
  * {@code ConversionException} if a conversion error occurs.
  * </p>
  *
@@ -32,14 +32,14 @@ import java.time.Period;
 public final class PeriodConverter extends AbstractConverter<Period> {
 
     /**
-     * Constructs a <b>java.time.Period</b> <i>Converter</i> that throws
+     * Constructs a <b>java.time.Period</b> <em>Converter</em> that throws
      * a {@code ConversionException} if an error occurs.
      */
     public PeriodConverter() {
     }
 
     /**
-     * Constructs a <b>java.time.Period</b> <i>Converter</i> that returns
+     * Constructs a <b>java.time.Period</b> <em>Converter</em> that returns
      * a default value if an error occurs.
      *
      * @param defaultValue The default value to be returned
@@ -63,7 +63,7 @@ public final class PeriodConverter extends AbstractConverter<Period> {
     @Override
     protected <T> T convertToType(final Class<T> type, final Object value) throws Throwable {
         if (Period.class.equals(type)) {
-            return type.cast(Period.parse((String.valueOf(value))));
+            return type.cast(Period.parse(String.valueOf(value)));
         }
 
         throw conversionException(type, value);

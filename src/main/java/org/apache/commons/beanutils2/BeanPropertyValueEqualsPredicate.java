@@ -56,14 +56,14 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * A typical usage might look like:
  * </p>
- * <pre><code>
+ * <pre>{@code
  * // create the closure
  * BeanPropertyValueEqualsPredicate predicate =
  *    new BeanPropertyValueEqualsPredicate( "activeEmployee", Boolean.FALSE );
  *
  * // filter the Collection
  * CollectionUtils.filter( peopleCollection, predicate );
- * </code></pre>
+ * }</pre>
  * <p>
  * This would take a {@code Collection} of person objects and filter out any people whose
  * {@code activeEmployee</code> property is <code>false}. Assuming...
@@ -81,14 +81,14 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * Another typical usage might look like:
  * </p>
- * <pre><code>
+ * <pre>{@code
  * // create the closure
  * BeanPropertyValueEqualsPredicate predicate =
  *    new BeanPropertyValueEqualsPredicate( "personId", "456-12-1234" );
  *
  * // search the Collection
  * CollectionUtils.find( peopleCollection, predicate );
- * </code></pre>
+ * }</pre>
  * <p>
  * This would search a {@code Collection} of person objects and return the first object whose
  * {@code personId</code> property value equals <code>456-12-1234}. Assuming...
@@ -255,34 +255,18 @@ public class BeanPropertyValueEqualsPredicate<T, V> implements Predicate<T> {
             final String errorMsg = "Problem during evaluation. Null value encountered in property path...";
 
             if (!ignoreNull) {
-                final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-                if (!BeanUtils.initCause(iae, e)) {
-                    log.error(errorMsg, e);
-                }
-                throw iae;
+                throw new IllegalArgumentException(errorMsg, e);
             }
             log.warn(errorMsg, e);
         } catch (final IllegalAccessException e) {
             final String errorMsg = "Unable to access the property provided.";
-            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-            if (!BeanUtils.initCause(iae, e)) {
-                log.error(errorMsg, e);
-            }
-            throw iae;
+            throw new IllegalArgumentException(errorMsg, e);
         } catch (final InvocationTargetException e) {
             final String errorMsg = "Exception occurred in property's getter";
-            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-            if (!BeanUtils.initCause(iae, e)) {
-                log.error(errorMsg, e);
-            }
-            throw iae;
+            throw new IllegalArgumentException(errorMsg, e);
         } catch (final NoSuchMethodException e) {
             final String errorMsg = "Property not found.";
-            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-            if (!BeanUtils.initCause(iae, e)) {
-                log.error(errorMsg, e);
-            }
-            throw iae;
+            throw new IllegalArgumentException(errorMsg, e);
         }
 
         return evaluation;

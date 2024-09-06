@@ -21,17 +21,53 @@ import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.beanutils2.expression.Resolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * TODO docs
+ *
+ * <p>2.0</p>
+ *
+ * <p>{@link BeanUtilsBean} implementation that creates a
+ * {@link ConvertUtilsBean} and delegates conversion to
+ * {@link ConvertUtilsBean#convert(Object, Class)}.
+ * </p>
+ *
+ * <p>
+ * To configure this implementation for the current context ClassLoader invoke
+ * {@code BeanUtilsBean.setInstance(new BeanUtilsBean2());}
+ * </p>
+ *
+ * <p>
+ * BeanUtils 1.7.0 delegated all conversion to String to the converter
+ * registered for the {@code String.class}. One of the improvements in
+ * BeanUtils 1.8.0 was to upgrade the {@link Converter} implementations so
+ * that they could handle conversion to String for their type (e.g.
+ * IntegerConverter now handles conversion from an Integer to a String as
+ * well as String to Integer).
+ * </p>
+ *
+ * <p>
+ * In order to take advantage of these improvements BeanUtils needs to change
+ * how it gets the appropriate {@link Converter}. This functionality has been
+ * implemented in the new {@link ConvertUtilsBean#lookup(Class, Class)} and
+ * {@link ConvertUtilsBean#convert(Object, Class)} methods. However changing
+ * {@link BeanUtilsBean} to use these methods could create compatibility
+ * issues for existing users. In order to avoid that, this new
+ * {@link BeanUtilsBean} implementation has been created (and the associated
+ * {@link ConvertUtilsBean}).
+ * </p>
+ *
+ * <p>Pre-2.0</p>
+ *
  * <p>JavaBean property population methods.</p>
  *
  * <p>This class provides implementations for the utility methods in
@@ -61,9 +97,6 @@ public class BeanUtilsBean {
      */
     private static final Log LOG = LogFactory.getLog(BeanUtilsBean.class);
 
-    /** A reference to Throwable's initCause method, or null if it's not there in this JVM */
-    private static final Method INIT_CAUSE_METHOD = getInitCauseMethod();
-
     /**
      * Determines the type of a {@code DynaProperty}. Here a special treatment
      * is needed for mapped properties.
@@ -78,34 +111,6 @@ public class BeanUtilsBean {
             return dynaProperty.getType();
         }
         return value == null ? String.class : value.getClass();
-    }
-
-    /**
-     * Returns a <code>Method<code> allowing access to
-     * {@link Throwable#initCause(Throwable)} method of {@link Throwable},
-     * or {@code null} if the method
-     * does not exist.
-     *
-     * @return A {@code Method<code> for <code>Throwable.initCause}, or
-     * {@code null} if unavailable.
-     */
-    private static Method getInitCauseMethod() {
-        try {
-            final Class<?>[] paramsClasses = { Throwable.class };
-            return Throwable.class.getMethod("initCause", paramsClasses);
-        } catch (final NoSuchMethodException e) {
-            final Log log = LogFactory.getLog(BeanUtils.class);
-            if (log.isWarnEnabled()) {
-                log.warn("Throwable does not have initCause() method in JDK 1.3");
-            }
-            return null;
-        } catch (final Throwable e) {
-            final Log log = LogFactory.getLog(BeanUtils.class);
-            if (log.isWarnEnabled()) {
-                log.warn("Error getting the Throwable initCause() method", e);
-            }
-            return null;
-        }
     }
 
     /**
@@ -148,13 +153,13 @@ public class BeanUtilsBean {
      * <p>Constructs an instance using given conversion instances
      * and new {@link PropertyUtilsBean} instance.</p>
      *
-     * @param convertUtilsBean use this {@code ConvertUtilsBean}
+     * @param todoRemove use this {@code ConvertUtilsBean}
      * to perform conversions from one object to another
      *
      * @since 1.8.0
      */
-    public BeanUtilsBean(final ConvertUtilsBean convertUtilsBean) {
-        this(convertUtilsBean, new PropertyUtilsBean());
+    public BeanUtilsBean(final ConvertUtilsBean todoRemove) {
+        this(new ConvertUtilsBean(), new PropertyUtilsBean());
     }
 
     /**
@@ -213,23 +218,12 @@ public class BeanUtilsBean {
      * <p>Converts the value to an object of the specified class (if
      * possible).</p>
      *
-     * @param <R> The desired return type
      * @param value Value to be converted (may be null)
      * @param type Class of the value to be converted to
      * @return The converted value
-     *
-     * @throws ConversionException if thrown by an underlying Converter
-     * @since 1.8.0
      */
     protected <R> Object convert(final Object value, final Class<R> type) {
-        final Converter<R> converter = getConvertUtils().lookup(type);
-        if (converter != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("        USING CONVERTER " + converter);
-            }
-            return converter.convert(type, value);
-        }
-        return value;
+        return getConvertUtils().convert(value, type);
     }
 
     /**
@@ -290,18 +284,12 @@ public class BeanUtilsBean {
     public void copyProperties(final Object dest, final Object orig)
         throws IllegalAccessException, InvocationTargetException {
         // Validate existence of the specified beans
-        if (dest == null) {
-            throw new IllegalArgumentException
-                    ("No destination bean specified");
-        }
-        if (orig == null) {
-            throw new IllegalArgumentException("No origin bean specified");
-        }
+        Objects.requireNonNull(dest, "dest");
+        Objects.requireNonNull(orig, "orig");
         if (LOG.isDebugEnabled()) {
             LOG.debug("BeanUtils.copyProperties(" + dest + ", " +
                       orig + ")");
         }
-
         // Copy the properties, converting as necessary
         if (orig instanceof DynaBean) {
             final DynaProperty[] origDescriptors =
@@ -800,26 +788,6 @@ public class BeanUtilsBean {
             NoSuchMethodException {
         final Object value = getPropertyUtils().getSimpleProperty(bean, name);
         return getConvertUtils().convert(value);
-    }
-
-    /**
-     * If we're running on JDK 1.4 or later, initialize the cause for the given throwable.
-     *
-     * @param  throwable The throwable.
-     * @param  cause     The cause of the throwable.
-     * @return  true if the cause was initialized, otherwise false.
-     * @since 1.8.0
-     */
-    public boolean initCause(final Throwable throwable, final Throwable cause) {
-        if (INIT_CAUSE_METHOD != null && cause != null) {
-            try {
-                INIT_CAUSE_METHOD.invoke(throwable, cause);
-                return true;
-            } catch (final Throwable e) {
-             // can't initialize cause
-            }
-        }
-        return false;
     }
 
     /**

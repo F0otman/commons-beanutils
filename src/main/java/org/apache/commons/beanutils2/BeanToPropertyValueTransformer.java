@@ -38,13 +38,13 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * A typical usage might look like:
  * </p>
- * <pre><code>
+ * <pre>{@code
  * // create the transformer
  * BeanToPropertyValueTransformer transformer = new BeanToPropertyValueTransformer( "person.address.city" );
  *
  * // transform the Collection
  * Collection peoplesCities = CollectionUtils.collect( peopleCollection, transformer );
- * </code></pre>
+ * }</pre>
  *
  * <p>
  * This would take a {@code Collection</code> of person objects and return a <code>Collection}
@@ -145,44 +145,24 @@ public class BeanToPropertyValueTransformer<T, R> implements Function<T, R> {
      */
     @Override
     public R apply(final T object) {
-
         R propertyValue = null;
-
         try {
             propertyValue = (R) PropertyUtils.getProperty(object, propertyName);
         } catch (final IllegalArgumentException e) {
             final String errorMsg = "Problem during transformation. Null value encountered in property path...";
-
             if (!ignoreNull) {
-                final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-                if (!BeanUtils.initCause(iae, e)) {
-                    log.error(errorMsg, e);
-                }
-                throw iae;
+                throw new IllegalArgumentException(errorMsg, e);
             }
             log.warn(errorMsg, e);
         } catch (final IllegalAccessException e) {
             final String errorMsg = "Unable to access the property provided.";
-            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-            if (!BeanUtils.initCause(iae, e)) {
-                log.error(errorMsg, e);
-            }
-            throw iae;
+            throw new IllegalArgumentException(errorMsg, e);
         } catch (final InvocationTargetException e) {
             final String errorMsg = "Exception occurred in property's getter";
-            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-            if (!BeanUtils.initCause(iae, e)) {
-                log.error(errorMsg, e);
-            }
-            throw iae;
+            throw new IllegalArgumentException(errorMsg, e);
         } catch (final NoSuchMethodException e) {
-            final String errorMsg = "No property found for name [" +
-                propertyName + "]";
-            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);
-            if (!BeanUtils.initCause(iae, e)) {
-                log.error(errorMsg, e);
-            }
-            throw iae;
+            final String errorMsg = "No property found for name [" + propertyName + "]";
+            throw new IllegalArgumentException(errorMsg, e);
         }
 
         return propertyValue;

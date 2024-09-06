@@ -17,6 +17,9 @@
 
 package org.apache.commons.beanutils2.converters;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,13 +29,16 @@ import java.util.Locale;
 import org.apache.commons.beanutils2.ConversionException;
 import org.apache.commons.beanutils2.locale.converters.DateLocaleConverter;
 import org.apache.commons.beanutils2.locale.converters.DateLocaleConverter.Builder;
+import org.apache.commons.lang3.SystemProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Case for the DateLocaleConverter class.
  */
-public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Date> {
+class DateLocaleConverterTestCase extends AbstractLocaleConverterTestCase<Date> {
 
     /** All logging goes through this logger */
     private static final Log LOG = LogFactory.getLog(DateLocaleConverterTestCase.class);
@@ -45,19 +51,16 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     protected String defaultShortDateValue;
     protected boolean validLocalDateSymbols;
 
-    public DateLocaleConverterTestCase(final String name) {
-        super(name);
-    }
-
     /**
      * Sets up instance variables required by this test case.
      */
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
 
         super.setUp();
 
-        final String version = System.getProperty("java.specification.version");
+        final String version = SystemProperties.getJavaSpecificationVersion();
         LOG.debug("JDK Version " + version);
 
         try {
@@ -97,32 +100,25 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     }
 
     /**
-     * Tear down instance variables required by this test case.
-     */
-    @Override
-    public void tearDown() {
-        super.tearDown();
-    }
-
-    /**
      * Test Calendar
      */
+    @Test
     public void testCalendarObject() {
         converter = DateLocaleConverter.builder().setLocale(defaultLocale).get();
         final java.util.Calendar calendar = java.util.Calendar.getInstance();
         calendar.setTime((java.util.Date) expectedValue);
-        assertEquals("java.util.Calendar", expectedValue, converter.convert(calendar));
+        assertEquals(expectedValue, converter.convert(calendar), "java.util.Calendar");
     }
 
     /**
      * Test Converter() constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_2() {
 
-        // ------------- Construct using default pattern & default locale ------------
+        // Construct using default pattern & default locale
         converter = DateLocaleConverter.builder().get();
 
         // Perform Tests
@@ -145,11 +141,11 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
      * Test Converter(locPattern) constructor
      *
      * Uses the default locale, no default value
-     *
      */
+    @Test
     public void testConstructor_3() {
 
-        // ------------- Construct using default pattern & default locale --------
+        // Construct using default pattern & default locale
         converter = DateLocaleConverter.builder().setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -163,9 +159,10 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test Converter(Locale) constructor
      */
+    @Test
     public void testConstructor_4() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DateLocaleConverter.builder().setLocale(localizedLocale).get();
 
         // Perform Tests
@@ -179,6 +176,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test Converter(Locale, locPattern) constructor
      */
+    @Test
     public void testConstructor_5() {
 
         // Skip this test if no valid symbols for the locale
@@ -187,7 +185,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
             return;
         }
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DateLocaleConverter.builder().setLocale(localizedLocale).setLocalizedPattern(true).get();
 
         // Perform Tests
@@ -201,9 +199,10 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test Converter(Locale, pattern) constructor
      */
+    @Test
     public void testConstructor_6() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DateLocaleConverter.builder().setLocale(localizedLocale).setPattern(defaultDatePattern).get();
 
         // Perform Tests
@@ -217,6 +216,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test Converter(Locale, pattern, locPattern) constructor
      */
+    @Test
     public void testConstructor_7() {
 
         // Skip this test if no valid symbols for the locale
@@ -225,7 +225,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
             return;
         }
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         // @formatter:off
         converter = DateLocaleConverter.builder()
                 .setLocale(localizedLocale)
@@ -245,9 +245,10 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test Converter(defaultValue) constructor
      */
+    @Test
     public void testConstructor_8() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DateLocaleConverter.builder().setDefault(defaultValue).get();
 
         // Perform Tests
@@ -261,9 +262,10 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test Converter(defaultValue, locPattern) constructor
      */
+    @Test
     public void testConstructor_9() {
 
-        // ------------- Construct using specified Locale --------
+        // Construct using specified Locale
         converter = DateLocaleConverter.builder().setDefault(defaultValue).setLocalizedPattern(true).get();
 
         // @formatter:off
@@ -285,6 +287,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test Converter(defaultValue, locale, pattern, localizedPattern) constructor
      */
+    @Test
     public void testConstructorMain() {
 
         // Skip this test if no valid symbols for the locale
@@ -293,7 +296,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
             return;
         }
 
-        // ------------- Construct with localized pattern ------------
+        // Construct with localized pattern
         // @formatter:off
         converter = DateLocaleConverter.builder()
                 .setDefault(defaultValue)
@@ -323,7 +326,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
         // **************************************************************************
         // convertValueToType(converter, "(B)", String.class, localizedDateValue, localizedDatePattern, expectedValue);
 
-        // ------------- Construct with non-localized pattern ------------
+        // Construct with non-localized pattern
         // @formatter:off
         converter = DateLocaleConverter.builder()
                 .setDefault(defaultValue)
@@ -343,14 +346,16 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
     /**
      * Test java.util.Date
      */
+    @Test
     public void testDateObject() {
         converter = DateLocaleConverter.builder().setLocale(defaultLocale).get();
-        assertEquals("java.util.Date", expectedValue, converter.convert(expectedValue));
+        assertEquals(expectedValue, converter.convert(expectedValue), "java.util.Date");
     }
 
     /**
      * Test invalid date
      */
+    @Test
     public void testInvalidDate() {
 
         converter = DateLocaleConverter.builder().setLocale(defaultLocale).get();
@@ -358,17 +363,19 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
         try {
             converter.convert("01/10/2004", "dd-MM-yyyy");
         } catch (final ConversionException e) {
-            assertEquals("Parse Error", "Error parsing date '01/10/2004' at position = 2", e.getMessage());
+            assertEquals("Error parsing date '01/10/2004' at position = 2", e.getMessage(), "Parse Error");
         }
 
         try {
             converter.convert("01-10-2004X", "dd-MM-yyyy");
         } catch (final ConversionException e) {
-            assertEquals("Parse Length", "Date '01-10-2004X' contains unparsed characters from position = 10", e.getMessage());
+            assertEquals("Date '01-10-2004X' contains unparsed characters from position = 10",
+                                    e.getMessage(), "Parse Length");
         }
 
     }
 
+    @Test
     public void testSetLenient() {
         // make sure that date format works as expected
         final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.UK);
@@ -417,7 +424,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
         final Builder<?, Date> builder = DateLocaleConverter.builder().setLocale(Locale.UK).setLenient(false).setPattern("MMM dd, yyyy");
         DateLocaleConverter<Date> converter = builder.get();
 
-        assertEquals("Set lenient failed", converter.isLenient(), false);
+        assertEquals(converter.isLenient(), false, "Set lenient failed");
 
         try {
 
@@ -430,7 +437,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
         try {
 
             converter.convert("Feb 31, 2001");
-            assertEquals("Set lenient failed", converter.isLenient(), false);
+            assertEquals(converter.isLenient(), false, "Set lenient failed");
             fail("Parsed illegal date (2)");
 
         } catch (final ConversionException e) {
@@ -439,7 +446,7 @@ public class DateLocaleConverterTestCase extends BaseLocaleConverterTestCase<Dat
 
         // test with leniency
         converter = builder.setLenient(true).get();
-        assertEquals("Set lenient failed", converter.isLenient(), true);
+        assertEquals(converter.isLenient(), true, "Set lenient failed");
 
         try {
 

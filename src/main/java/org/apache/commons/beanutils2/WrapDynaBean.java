@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * <p>Implementation of {@code DynaBean} that wraps a standard JavaBean
+ * <p>Implements {@code DynaBean} to wrap a standard JavaBean
  * instance, so that DynaBean APIs can be used to access its properties.</p>
  *
  * <p>
@@ -29,16 +29,15 @@ import java.lang.reflect.InvocationTargetException;
  * (This makes it different from the typical use cases for other {@code DynaBean}'s.)
  * For example:
  * </p>
- * <pre><code>
+ * <pre>{@code
  *  Object aJavaBean = ...;
  *  ...
  *  DynaBean db = new WrapDynaBean(aJavaBean);
  *  ...
- * </code></pre>
+ * }</pre>
  *
  * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation does not
  * support the {@code contains()</code> and <code>remove()} methods.</p>
- *
  */
 
 public class WrapDynaBean implements DynaBean, Serializable {
@@ -108,6 +107,7 @@ public class WrapDynaBean implements DynaBean, Serializable {
      *
      * @throws IllegalArgumentException if there is no property
      *  of the specified name
+     * @throws NullPointerException for null input.
      */
     @Override
     public Object get(final String name) {
@@ -116,13 +116,11 @@ public class WrapDynaBean implements DynaBean, Serializable {
             value = getPropertyUtils().getSimpleProperty(instance, name);
         } catch (final InvocationTargetException ite) {
             final Throwable cause = ite.getTargetException();
-            throw new IllegalArgumentException
-                    ("Error reading property '" + name +
-                              "' nested exception - " + cause);
+            throw new IllegalArgumentException("Error reading property '" + name + "' nested exception - " + cause);
+        } catch (final NullPointerException t) {
+            throw t;
         } catch (final Throwable t) {
-            throw new IllegalArgumentException
-                    ("Error reading property '" + name +
-                              "', exception - " + t);
+            throw new IllegalArgumentException("Error reading property '" + name + "', exception - " + t);
         }
         return value;
     }

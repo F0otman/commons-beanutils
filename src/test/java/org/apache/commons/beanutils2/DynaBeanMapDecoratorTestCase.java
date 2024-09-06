@@ -16,6 +16,11 @@
  */
 package org.apache.commons.beanutils2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,18 +31,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * <p>
  * Test Case for the {@code DynaBeanMapDecorator} implementation class.
  * </p>
- *
  */
 @SuppressWarnings("deprecation")
-public class DynaBeanMapDecoratorTestCase extends TestCase {
+public class DynaBeanMapDecoratorTestCase {
 
     private static final DynaProperty stringProp = new DynaProperty("stringProp", String.class);
     private static final DynaProperty nullProp = new DynaProperty("nullProp", String.class);
@@ -52,19 +56,6 @@ public class DynaBeanMapDecoratorTestCase extends TestCase {
     private static final Date dateVal = new Date();
     private static final Map<String, Object> emptyMap = new DynaBeanPropertyMapDecorator(new BasicDynaBean(new BasicDynaClass()));
 
-    /**
-     * Run thus Test
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Creates the tests included in this test suite.
-     */
-    public static Test suite() {
-        return new TestSuite(DynaBeanMapDecoratorTestCase.class);
-    }
     private final Map<Object, Object> mapVal = new HashMap<>();
     private final Object[] values = { stringVal, null, intVal, dateVal, mapVal };
     private BasicDynaBean dynaBean;
@@ -74,73 +65,29 @@ public class DynaBeanMapDecoratorTestCase extends TestCase {
     private Map<String, Object> modifiableMap;
 
     /**
-     * Constructs a new instance of this test case.
-     *
-     * @param name Name of the test case
-     */
-    public DynaBeanMapDecoratorTestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Check that a Collection is not modifiable
      */
     private <E> void checkUnmodifiable(final String desc, final Collection<E> collection, final E addElem) {
         // Check can't add()
-        try {
-            collection.add(addElem);
-            fail(desc + ".add()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-
+        assertThrows(UnsupportedOperationException.class, () -> collection.add(addElem));
         // Check can't addAll()
         final List<E> list = new ArrayList<>(1);
         list.add(addElem);
-        try {
-            collection.addAll(list);
-            fail(desc + ".addAll()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-
+        assertThrows(UnsupportedOperationException.class, () -> collection.addAll(list));
         // Check can't clear()
-        try {
-            collection.clear();
-            fail(desc + ".clear()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-
+        assertThrows(UnsupportedOperationException.class, () -> collection.clear());
         // Check can't remove()
-        try {
-            collection.remove("abc");
-            fail(desc + ".remove()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-
+        assertThrows(UnsupportedOperationException.class, () -> collection.remove("abc"));
         // Check can't removeAll()
-        try {
-            collection.removeAll(list);
-            fail(desc + ".removeAll()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-
+        assertThrows(UnsupportedOperationException.class, () -> collection.removeAll(list));
         // Check can't retainAll()
-        try {
-            collection.retainAll(list);
-            fail(desc + ".retainAll()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
+        assertThrows(UnsupportedOperationException.class, () -> collection.retainAll(list));
     }
 
     /**
      * Sets up instance variables required by this test case.
      */
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
 
         mapVal.clear();
@@ -162,7 +109,7 @@ public class DynaBeanMapDecoratorTestCase extends TestCase {
     /**
      * Tear down instance variables required by this test case.
      */
-    @Override
+    @AfterEach
     public void tearDown() {
         dynaBean = null;
         decoratedMap = null;
@@ -172,40 +119,34 @@ public class DynaBeanMapDecoratorTestCase extends TestCase {
     /**
      * Test clear() method
      */
+    @Test
     public void testClear() {
-        try {
-            decoratedMap.clear();
-            fail("decoratedMap.clear()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-        try {
-            modifiableMap.clear();
-            fail("modifiableMap.clear()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
+        assertThrows(UnsupportedOperationException.class, () -> decoratedMap.clear());
+        assertThrows(UnsupportedOperationException.class, () -> modifiableMap.clear());
     }
 
     /**
      * Test containsKey() method
      */
+    @Test
     public void testContainsKey() {
-        assertTrue("decoratedMap true", decoratedMap.containsKey(stringProp.getName()));
-        assertFalse("decoratedMap false", decoratedMap.containsKey("xyz"));
+        assertTrue(decoratedMap.containsKey(stringProp.getName()), "decoratedMap true");
+        assertFalse(decoratedMap.containsKey("xyz"), "decoratedMap false");
     }
 
     /**
      * Test containsValue() method
      */
+    @Test
     public void testContainsValue() {
-        assertTrue("decoratedMap true", decoratedMap.containsValue(stringVal));
-        assertFalse("decoratedMap false", decoratedMap.containsValue("xyz"));
+        assertTrue(decoratedMap.containsValue(stringVal), "decoratedMap true");
+        assertFalse(decoratedMap.containsValue("xyz"), "decoratedMap false");
     }
 
     /**
      * Test entrySet() method
      */
+    @Test
     public void testEntrySet() {
         final Set<Map.Entry<String, Object>> set = modifiableMap.entrySet();
 
@@ -214,7 +155,7 @@ public class DynaBeanMapDecoratorTestCase extends TestCase {
         m.put("key", "value");
         checkUnmodifiable("entrySet()", set, m.entrySet().iterator().next());
 
-        assertEquals("entrySet size", properties.length, set.size());
+        assertEquals(properties.length, set.size(), "entrySet size");
 
         final List<String> namesList = new ArrayList<>();
         int i = 0;
@@ -222,151 +163,127 @@ public class DynaBeanMapDecoratorTestCase extends TestCase {
             final String name = entry.getKey();
             namesList.add(name);
             final Object expectValue = decoratedMap.get(name);
-            assertEquals("entrySet(" + i + ") val", expectValue, entry.getValue());
+            assertEquals(expectValue, entry.getValue(), "entrySet(" + i + ") val");
             i++;
         }
         for (int j = 0; j < properties.length; j++) {
             final String name = properties[j].getName();
-            assertTrue("Check property[" + j + "]", namesList.contains(name));
+            assertTrue(namesList.contains(name), "Check property[" + j + "]");
         }
     }
 
     /**
      * Test get() method
      */
+    @Test
     public void testGet() {
-
         // valid property name
-        assertEquals("decoratedMap valid", stringVal, decoratedMap.get(stringProp.getName()));
-
+        assertEquals(stringVal, decoratedMap.get(stringProp.getName()), "decoratedMap valid");
         // invalid property name
-        try {
-            decoratedMap.get("xyz");
-            fail("decoratedMap invalid");
-        } catch (final IllegalArgumentException ignore) {
-            // expected result
-        }
+        assertThrows(IllegalArgumentException.class, () -> decoratedMap.get("xyz"));
     }
 
     /**
      * Test isEmpty() method
      */
+    @Test
     public void testIsEmpty() {
-        assertTrue("Empty", emptyMap.isEmpty());
-        assertFalse("Not Empty", decoratedMap.isEmpty());
+        assertTrue(emptyMap.isEmpty(), "Empty");
+        assertFalse(decoratedMap.isEmpty(), "Not Empty");
     }
 
     /**
      * Test isReadOnly() method
      */
+    @Test
     public void testIsReadOnly() {
-        assertTrue("decoratedMap true", ((DynaBeanPropertyMapDecorator) decoratedMap).isReadOnly());
-        assertFalse("modifiableMap false", ((DynaBeanPropertyMapDecorator) modifiableMap).isReadOnly());
+        assertTrue(((DynaBeanPropertyMapDecorator) decoratedMap).isReadOnly(), "decoratedMap true");
+        assertFalse(((DynaBeanPropertyMapDecorator) modifiableMap).isReadOnly(), "modifiableMap false");
     }
 
     /**
      * Test keySet() method
      */
+    @Test
     public void testKeySet() {
         final Set<String> set = modifiableMap.keySet();
 
         // Check the Set can't be modified
         checkUnmodifiable("keySet()", set, "xyz");
 
-        assertEquals("keySet size", properties.length, set.size());
+        assertEquals(properties.length, set.size(), "keySet size");
 
         for (int i = 0; i < properties.length; i++) {
             final String name = properties[i].getName();
-            assertTrue("Check property[" + i + "]", set.contains(name));
+            assertTrue(set.contains(name), "Check property[" + i + "]");
         }
     }
 
     /**
      * Test put() method
      */
+    @Test
     public void testPut() {
-
         final String newValue = "ABC";
-
         // Test read only
-        try {
-            decoratedMap.put(stringProp.getName(), newValue);
-            fail("Not read only");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-
+        assertThrows(UnsupportedOperationException.class, () -> decoratedMap.put(stringProp.getName(), newValue));
         // Test Writable
-        assertEquals("modifiableMap put", stringVal, modifiableMap.put(stringProp.getName(), newValue));
-        assertEquals("dynaBean get", newValue, dynaBean.get(stringProp.getName()));
-        assertEquals("modifiableMap get", newValue, modifiableMap.get(stringProp.getName()));
+        assertEquals(stringVal, modifiableMap.put(stringProp.getName(), newValue), "modifiableMap put");
+        assertEquals(newValue, dynaBean.get(stringProp.getName()), "dynaBean get");
+        assertEquals(newValue, modifiableMap.get(stringProp.getName()), "modifiableMap get");
     }
 
     /**
      * Test putAll() method
      */
+    @Test
     public void testPutAll() {
-
         final String newValue = "ABC";
         final Map<String, Object> newMap = new HashMap<>();
         newMap.put(stringProp.getName(), newValue);
-
         // Test read only
-        try {
-            decoratedMap.putAll(newMap);
-            fail("Not read only");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-
+        assertThrows(UnsupportedOperationException.class, () -> decoratedMap.putAll(newMap));
         // Test Writable
-        assertEquals("before putAll", stringVal, dynaBean.get(stringProp.getName()));
+        assertEquals(stringVal, dynaBean.get(stringProp.getName()), "before putAll");
         modifiableMap.putAll(newMap);
-        assertEquals("after putAll", newValue, dynaBean.get(stringProp.getName()));
+        assertEquals(newValue, dynaBean.get(stringProp.getName()), "after putAll");
     }
 
     /**
      * Test remove() method
      */
+    @Test
     public void testRemove() {
-        try {
-            decoratedMap.remove(stringProp.getName());
-            fail("decoratedMap.remove()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
-        try {
-            modifiableMap.remove(stringProp.getName());
-            fail("modifiableMap.remove()");
-        } catch (final UnsupportedOperationException ignore) {
-            // expected result
-        }
+        assertThrows(UnsupportedOperationException.class, () -> decoratedMap.remove(stringProp.getName()));
+        assertThrows(UnsupportedOperationException.class, () -> modifiableMap.remove(stringProp.getName()));
     }
 
     /**
      * Test size() method
      */
+    @Test
     public void testSize() {
-        assertEquals("Empty", 0, emptyMap.size());
-        assertEquals("Not Empty", properties.length, decoratedMap.size());
+        assertEquals(0, emptyMap.size(), "Empty");
+        assertEquals(properties.length, decoratedMap.size(), "Not Empty");
     }
 
     /**
      * Test values() method
      */
+    @Test
     public void testValues() {
         final Collection<Object> collection = modifiableMap.values();
 
         // Check the Collection can't be modified
         checkUnmodifiable("values()", collection, "xyz");
 
-        assertEquals("values size", values.length, collection.size());
+        assertEquals(values.length, collection.size(), "values size");
 
         // Collection should be ordered in same sequence as properties
         final Iterator<Object> iterator = collection.iterator();
         int i = 0;
         while (iterator.hasNext()) {
-            assertEquals("values(" + i + ")", values[i], iterator.next());
+            assertEquals(values[i], iterator.next(), "values(" + i + ")");
             i++;
         }
     }

@@ -36,7 +36,6 @@ import java.lang.reflect.Modifier;
  * If this call succeeds, then the method can be invoked as normal.
  * This call will only succeed when the application has sufficient security privileges.
  * If this call fails then a warning will be logged and the method may fail.</p>
- *
  */
 public class ConstructorUtils {
 
@@ -186,12 +185,9 @@ public class ConstructorUtils {
                              * TODO: Why?
                              */
                         }
-                        @SuppressWarnings("unchecked")
-                        final
                         // Class.getConstructors() actually returns constructors
                         // of type T, so it is safe to cast.
-                        Constructor<T> typedCtor = (Constructor<T>) ctor;
-                        return typedCtor;
+                        return (Constructor<T>) ctor;
                     }
                 }
             }

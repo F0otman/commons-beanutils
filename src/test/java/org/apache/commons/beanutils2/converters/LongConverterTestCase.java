@@ -17,24 +17,19 @@
 
 package org.apache.commons.beanutils2.converters;
 
-import org.apache.commons.beanutils2.Converter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import junit.framework.TestSuite;
+import org.apache.commons.beanutils2.Converter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Case for the LongConverter class.
  */
 public class LongConverterTestCase extends AbstractNumberConverterTest<Long> {
 
-    public static TestSuite suite() {
-        return new TestSuite(LongConverterTestCase.class);
-    }
-
     private Converter<Long> converter;
-
-    public LongConverterTestCase(final String name) {
-        super(name);
-    }
 
     @Override
     protected Class<Long> getExpectedType() {
@@ -51,7 +46,7 @@ public class LongConverterTestCase extends AbstractNumberConverterTest<Long> {
         return new LongConverter(defaultValue);
     }
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         converter = makeConverter();
         numbers[0] = Long.valueOf("-12");
@@ -60,11 +55,12 @@ public class LongConverterTestCase extends AbstractNumberConverterTest<Long> {
         numbers[3] = Long.valueOf("23");
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         converter = null;
     }
 
+    @Test
     public void testSimpleConversion() throws Exception {
         final String[] message = { "from String", "from String", "from String", "from String", "from String", "from String", "from String", "from Byte",
                 "from Short", "from Integer", "from Long", "from Float", "from Double" };
@@ -76,9 +72,9 @@ public class LongConverterTestCase extends AbstractNumberConverterTest<Long> {
                 Long.valueOf(Long.MAX_VALUE), Long.valueOf(7), Long.valueOf(8), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11), Long.valueOf(12) };
 
         for (int i = 0; i < expected.length; i++) {
-            assertEquals(message[i] + " to Long", expected[i], converter.convert(Long.class, input[i]));
-            assertEquals(message[i] + " to long", expected[i], converter.convert(Long.TYPE, input[i]));
-            assertEquals(message[i] + " to null type", expected[i], converter.convert(null, input[i]));
+            assertEquals(expected[i], converter.convert(Long.class, input[i]), message[i] + " to Long");
+            assertEquals(expected[i], converter.convert(Long.TYPE, input[i]), message[i] + " to long");
+            assertEquals(expected[i], converter.convert(null, input[i]), message[i] + " to null type");
         }
     }
 

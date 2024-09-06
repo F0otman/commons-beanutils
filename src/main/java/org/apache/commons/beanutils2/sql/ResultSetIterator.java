@@ -27,7 +27,7 @@ import org.apache.commons.beanutils2.DynaClass;
 
 /**
  * <p>
- * Implementation of {@link java.util.Iterator} returned by the {@code iterator()} method of {@link ResultSetDynaClass}. Each object returned by this iterator
+ * Implements {@link Iterator} returned by the {@code iterator()} method of {@link ResultSetDynaClass}. Each object returned by this iterator
  * will be a {@link DynaBean} that represents a single row from the result set being wrapped.
  * </p>
  */
@@ -163,7 +163,7 @@ public class ResultSetIterator implements DynaBean, Iterator<DynaBean> {
 
     /**
      * <p>
-     * Return {@code true} if the iteration has more elements.
+     * Gets {@code true} if the iteration has more elements.
      * </p>
      *
      * @return {@code true} if the result set has another row, otherwise {@code false}
@@ -180,7 +180,7 @@ public class ResultSetIterator implements DynaBean, Iterator<DynaBean> {
 
     /**
      * <p>
-     * Return the next element in the iteration.
+     * Gets the next element in the iteration.
      * </p>
      *
      * @return advance to the new row and return this

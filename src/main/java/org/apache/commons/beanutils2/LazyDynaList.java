@@ -21,18 +21,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * <h2><i>Lazy</i> DynaBean List.</h2>
+ * <h2><em>Lazy</em> DynaBean List.</h2>
  *
  * <p>There are two main purposes for this class:</p>
  *    <ul>
- *        <li>To provide <i>Lazy List</i> behavior - automatically
- *            <i>growing</i> and <i>populating</i> the {@code List}
+ *        <li>To provide <em>Lazy List</em> behavior - automatically
+ *            <em>growing</em> and <em>populating</em> the {@code List}
  *            with either {@code DynaBean</code>, <code>java.util.Map}
  *            or POJO Beans.</li>
  *        <li>To provide a straight forward way of putting a Collection
- *            or Array into the lazy list <i>and</i> a straight forward
+ *            or Array into the lazy list <em>and</em> a straight forward
  *            way to get it out again at the end.</li>
  *    </ul>
  *
@@ -69,35 +70,35 @@ import java.util.Map;
  * <p>If you have an array of {@code java.util.Map[]} - you can put that into
  *    a {@code LazyDynaList}.</p>
  *
- * <pre><code>
+ * <pre>{@code
  *    TreeMap[] myArray = .... // your Map[]
  *    List lazyList = new LazyDynaList(myArray);
- * </code></pre>
+ * }</pre>
  *
  * <p>New elements of the appropriate Map type are
  *    automatically populated:</p>
  *
- * <pre><code>
+ * <pre>{@code
  *    // get(index) automatically grows the list
  *    DynaBean newElement = (DynaBean)lazyList.get(lazyList.size());
  *    newElement.put("someProperty", "someValue");
- * </code></pre>
+ * }</pre>
  *
  * <p>Once you've finished you can get back an Array of the
  *    elements of the appropriate type:</p>
  *
- * <pre><code>
+ * <pre>{@code
  *    // Retrieve the array from the list
  *    TreeMap[] myArray = (TreeMap[])lazyList.toArray());
- * </code></pre>
+ * }</pre>
  *
  *
  * <h2>Example 2</h2>
- * <p>Alternatively you can create an <i>empty</i> List and
+ * <p>Alternatively you can create an <em>empty</em> List and
  *    specify the Class for List's elements. The LazyDynaList
  *    uses the Class to automatically populate elements:</p>
  *
- * <pre><code>
+ * <pre>{@code
  *    // e.g. For Maps
  *    List lazyList = new LazyDynaList(TreeMap.class);
  *
@@ -106,14 +107,14 @@ import java.util.Map;
  *
  *    // e.g. For DynaBeans
  *    List lazyList = new LazyDynaList(MyDynaBean.class);
- * </code></pre>
+ * }</pre>
  *
  * <h2>Example 3</h2>
- * <p>Alternatively you can create an <i>empty</i> List and specify the
+ * <p>Alternatively you can create an <em>empty</em> List and specify the
  *    DynaClass for List's elements. The LazyDynaList uses
  *    the DynaClass to automatically populate elements:</p>
  *
- * <pre><code>
+ * <pre>{@code
  *    // e.g. For Maps
  *    DynaClass dynaClass = new LazyDynaMap(new HashMap());
  *    List lazyList = new LazyDynaList(dynaClass);
@@ -125,12 +126,12 @@ import java.util.Map;
  *    // e.g. For DynaBeans
  *    DynaClass dynaClass = new BasicDynaClass(properties);
  *    List lazyList = new LazyDynaList(dynaClass);
- * </code></pre>
+ * }</pre>
  *
  * <p><strong>N.B.</strong> You may wonder why control the type
  *    using a {@code DynaClass</code> rather than the <code>Class}
  *    as in the previous example - the reason is that some {@code DynaBean}
- *    implementations don't have a <i>default</i> empty constructor and
+ *    implementations don't have a <em>default</em> empty constructor and
  *    therefore need to be instantiated using the {@code DynaClass.newInstance()}
  *    method.</p>
  *
@@ -141,7 +142,7 @@ import java.util.Map;
  *    with the normal {@link java.util.List} methods (i.e.
  *    {@code add()}, {@code addAll()} or {@code set()}).</p>
  *
- * <pre><code>
+ * <pre>{@code
  *    // Create a new LazyDynaList (100 element capacity)
  *    LazyDynaList lazyList = new LazyDynaList(100);
  *
@@ -154,7 +155,7 @@ import java.util.Map;
  *    // Populate from a collection
  *    lazyList.addAll(myCollection);
  *
- * </code></pre>
+ * }</pre>
  *
  * @since 1.8.0
  */
@@ -251,7 +252,7 @@ public class LazyDynaList extends ArrayList<Object> {
      *
      * <p>If the index position is greater than the current
      *    size of the List, then the List is automatically
-     *    <i>grown</i> to the appropriate size.</p>
+     *    <em>grown</em> to the appropriate size.</p>
      *
      * @param index The index position to insert the new element.
      * @param element The new element to add.
@@ -303,7 +304,7 @@ public class LazyDynaList extends ArrayList<Object> {
      *
      * <p>If the index position is greater than the current
      *    size of the List, then the List is automatically
-     *    <i>grown</i> to the appropriate size.</p>
+     *    <em>grown</em> to the appropriate size.</p>
      *
      * @param collection The Collection of new elements.
      * @param index The index position to insert the new elements at.
@@ -315,7 +316,7 @@ public class LazyDynaList extends ArrayList<Object> {
             return false;
         }
 
-        ensureCapacity((Math.max(index, size())) + collection.size());
+        ensureCapacity(Math.max(index, size()) + collection.size());
 
         // Call "transform" with first element, before
         // List is "grown" to ensure the correct DynaClass
@@ -353,7 +354,7 @@ public class LazyDynaList extends ArrayList<Object> {
      *
      * <p>If the position requested is greater than the current
      *    size of the List, then the List is automatically
-     *    <i>grown</i> (and populated) to the appropriate size.</p>
+     *    <em>grown</em> (and populated) to the appropriate size.</p>
      *
      * @param index The index position to insert the new elements at.
      * @return The element at the specified position.
@@ -373,7 +374,7 @@ public class LazyDynaList extends ArrayList<Object> {
     }
 
     /**
-     * <p>Automatically <i>grown</i> the List
+     * <p>Automatically <em>grown</em> the List
      *    to the appropriate size, populating with
      *    DynaBeans.</p>
      *
@@ -397,7 +398,7 @@ public class LazyDynaList extends ArrayList<Object> {
      *
      * <p>If the position requested is greater than the current
      *    size of the List, then the List is automatically
-     *    <i>grown</i> (and populated) to the appropriate size.</p>
+     *    <em>grown</em> (and populated) to the appropriate size.</p>
      *
      * @param index The index position to insert the new element at.
      * @param element The new element.
@@ -420,10 +421,7 @@ public class LazyDynaList extends ArrayList<Object> {
      *            contains elements or the DynaClass is null.
      */
     public void setElementDynaClass(final DynaClass elementDynaClass) {
-        if (elementDynaClass == null) {
-            throw new IllegalArgumentException("Element DynaClass is missing");
-        }
-
+        Objects.requireNonNull(elementDynaClass, "elementDynaClass");
         if (!isEmpty()) {
             throw new IllegalStateException("Element DynaClass cannot be reset");
         }
@@ -435,11 +433,12 @@ public class LazyDynaList extends ArrayList<Object> {
             if (WrapDynaBean.class.isAssignableFrom(elementDynaBeanType)) {
                 this.elementType = ((WrapDynaBean)dynaBean).getInstance().getClass();
                 this.wrapDynaClass = (WrapDynaClass)elementDynaClass;
-            } else if (LazyDynaMap.class.isAssignableFrom(elementDynaBeanType)) {
-                this.elementType = ((LazyDynaMap)dynaBean).getMap().getClass();
-                this.elementDynaClass = elementDynaClass;
             } else {
-                this.elementType = dynaBean.getClass();
+                if (LazyDynaMap.class.isAssignableFrom(elementDynaBeanType)) {
+                    this.elementType = ((LazyDynaMap)dynaBean).getMap().getClass();
+                } else {
+                    this.elementType = dynaBean.getClass();
+                }
                 this.elementDynaClass = elementDynaClass;
             }
         } catch (final Exception e) {
@@ -457,10 +456,7 @@ public class LazyDynaList extends ArrayList<Object> {
      *            contains elements or the DynaClass is null.
      */
     public void setElementType(final Class<?> elementType) {
-        if (elementType == null) {
-            throw new IllegalArgumentException("Element Type is missing");
-        }
-
+        Objects.requireNonNull(elementType, "elementType");
         final boolean changeType = this.elementType != null && !this.elementType.equals(elementType);
         if (changeType && !isEmpty()) {
             throw new IllegalStateException("Element Type cannot be reset");

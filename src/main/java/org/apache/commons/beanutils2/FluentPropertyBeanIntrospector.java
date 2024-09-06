@@ -21,6 +21,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -104,11 +105,7 @@ public class FluentPropertyBeanIntrospector implements BeanIntrospector {
      * @throws IllegalArgumentException if the prefix is <b>null</b>
      */
     public FluentPropertyBeanIntrospector(final String writePrefix) {
-        if (writePrefix == null) {
-            throw new IllegalArgumentException(
-                    "Prefix for write methods must not be null!");
-        }
-        writeMethodPrefix = writePrefix;
+        writeMethodPrefix = Objects.requireNonNull(writePrefix, "writePrefix");
     }
 
     /**
@@ -154,7 +151,13 @@ public class FluentPropertyBeanIntrospector implements BeanIntrospector {
                         icontext.addPropertyDescriptor(createFluentPropertyDescritor(
                                 m, propertyName));
                     } else if (pd.getWriteMethod() == null) {
-                        pd.setWriteMethod(m);
+                        // We should not change statically cached PropertyDescriptor as it can be from super-type,
+                        // it may affect other subclasses of targetClass supertype.
+                        // See BEANUTILS-541 for more details.
+                        final PropertyDescriptor fluentPropertyDescriptor = new PropertyDescriptor(
+                                pd.getName(), pd.getReadMethod(), m);
+                        // replace existing (possibly inherited from super-class) to one specific to current class
+                        icontext.addPropertyDescriptor(fluentPropertyDescriptor);
                     }
                 } catch (final IntrospectionException e) {
                     if (log.isDebugEnabled()) {
@@ -176,6 +179,6 @@ public class FluentPropertyBeanIntrospector implements BeanIntrospector {
         final String methodName = m.getName().substring(
                 getWriteMethodPrefix().length());
         return methodName.length() > 1 ? Introspector.decapitalize(methodName) : methodName
-                .toLowerCase(Locale.ENGLISH);
+                .toLowerCase(Locale.ROOT);
     }
 }

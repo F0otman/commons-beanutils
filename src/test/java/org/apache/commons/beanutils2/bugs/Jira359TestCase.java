@@ -16,19 +16,20 @@
  */
 package org.apache.commons.beanutils2.bugs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.apache.commons.beanutils2.BeanUtils;
 import org.apache.commons.beanutils2.BeanUtilsBean;
 import org.apache.commons.beanutils2.converters.ArrayConverter;
 import org.apache.commons.beanutils2.converters.StringConverter;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/BEANUTILS-359">https://issues.apache.org/jira/browse/BEANUTILS-359</a>
  */
-public class Jira359TestCase extends TestCase {
+public class Jira359TestCase {
 
     public static class SimplePojoData {
         private String[] jcrMixinTypes = new String[1];
@@ -46,40 +47,12 @@ public class Jira359TestCase extends TestCase {
     }
 
     /**
-     * Run the Test.
-     *
-     * @param args Arguments
-     */
-    public static void main(final String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    /**
-     * Create a test suite for this test.
-     *
-     * @return a test suite
-     */
-    public static Test suite() {
-        return new TestSuite(Jira359TestCase.class);
-    }
-
-    /**
-     * Create a test case with the specified name.
-     *
-     * @param name The name of the test
-     */
-    public Jira359TestCase(final String name) {
-        super(name);
-    }
-
-    /**
      * Sets up.
      *
      * @throws Exception
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
     }
 
     /**
@@ -101,14 +74,14 @@ public class Jira359TestCase extends TestCase {
      *
      * @throws Exception
      */
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Test {@link BeanUtils} setProperty() String to array with colon value
      */
+    @Test
     public void testBeanUtilsSetProperty_CustomConvertStringToArray_WithColonValue() throws Exception {
         final ArrayConverter converter = new ArrayConverter(String[].class, new StringConverter());
         converter.setAllowedChars(new char[] { '.', '-', ':' });
@@ -119,7 +92,7 @@ public class Jira359TestCase extends TestCase {
         final SimplePojoData simplePojo = new SimplePojoData();
         utils.setProperty(simplePojo, "jcrMixinTypes", "mix:rereferencible,mix:simple");
         showArray("Custom WithColonValue", simplePojo.getJcrMixinTypes());
-        assertEquals("array size", 2, simplePojo.getJcrMixinTypes().length);
+        assertEquals(2, simplePojo.getJcrMixinTypes().length, "array size");
         assertEquals("mix:rereferencible", simplePojo.getJcrMixinTypes()[0]);
         assertEquals("mix:simple", simplePojo.getJcrMixinTypes()[1]);
     }
@@ -127,11 +100,12 @@ public class Jira359TestCase extends TestCase {
     /**
      * Test {@link BeanUtils} setProperty() String to array with colon value
      */
+    @Test
     public void testBeanUtilsSetProperty_DefaultConvertStringToArray_WithColonValue() throws Exception {
         final SimplePojoData simplePojo = new SimplePojoData();
         BeanUtils.setProperty(simplePojo, "jcrMixinTypes", "mix:rereferencible,mix:simple");
         showArray("Default WithColonValue", simplePojo.getJcrMixinTypes());
-        assertEquals("array size", 4, simplePojo.getJcrMixinTypes().length);
+        assertEquals(4, simplePojo.getJcrMixinTypes().length, "array size");
         assertEquals("mix", simplePojo.getJcrMixinTypes()[0]);
         assertEquals("rereferencible", simplePojo.getJcrMixinTypes()[1]);
         assertEquals("mix", simplePojo.getJcrMixinTypes()[2]);
@@ -141,11 +115,12 @@ public class Jira359TestCase extends TestCase {
     /**
      * Test {@link BeanUtils} setProperty() String to array without colon value
      */
+    @Test
     public void testBeanUtilsSetProperty_DefaultConvertStringToArray_WithoutColonValue() throws Exception {
         final SimplePojoData simplePojo = new SimplePojoData();
         BeanUtils.setProperty(simplePojo, "jcrMixinTypes", "mixrereferencible,mixsimple");
         showArray("Default WithoutColonValue", simplePojo.getJcrMixinTypes());
-        assertEquals("array size", 2, simplePojo.getJcrMixinTypes().length);
+        assertEquals(2, simplePojo.getJcrMixinTypes().length, "array size");
         assertEquals("mixrereferencible", simplePojo.getJcrMixinTypes()[0]);
         assertEquals("mixsimple", simplePojo.getJcrMixinTypes()[1]);
     }
@@ -153,11 +128,12 @@ public class Jira359TestCase extends TestCase {
     /**
      * Test {@link BeanUtils} setProperty() String to array without colon value and no comma
      */
+    @Test
     public void testBeanUtilsSetProperty_DefaultConvertStringToArray_WithoutColonValueAndNocoma() throws Exception {
         final SimplePojoData simplePojo = new SimplePojoData();
         BeanUtils.setProperty(simplePojo, "jcrMixinTypes", "mixrereferencible");
         showArray("Default WithoutColonAndNocoma", simplePojo.getJcrMixinTypes());
-        assertEquals("array size", 1, simplePojo.getJcrMixinTypes().length);
+        assertEquals(1, simplePojo.getJcrMixinTypes().length, "array size");
         assertEquals("mixrereferencible", simplePojo.getJcrMixinTypes()[0]);
     }
 }

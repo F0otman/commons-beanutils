@@ -30,7 +30,7 @@ import org.apache.commons.beanutils2.DynaProperty;
 
 /**
  * <p>
- * Implementation of {@link DynaClass} that creates an in-memory collection of {@link DynaBean}s representing the results of an SQL query. Once the
+ * Implements {@link DynaClass} to create an in-memory collection of {@link DynaBean}s representing the results of an SQL query. Once the
  * {@link DynaClass} instance has been created, the JDBC {@code ResultSet} and {@code Statement} on which it is based can be closed, and the underlying
  * {@code Connection} can be returned to its connection pool (if you are using one).
  * </p>
@@ -247,7 +247,7 @@ public class RowSetDynaClass extends AbstractJdbcDynaClass {
 
     /**
      * <p>
-     * Return a {@code List} containing the {@link DynaBean}s that represent the contents of each {@code Row} from the {@code ResultSet} that was the basis of
+     * Gets a {@code List} containing the {@link DynaBean}s that represent the contents of each {@code Row} from the {@code ResultSet} that was the basis of
      * this {@link RowSetDynaClass} instance. These {@link DynaBean}s are disconnected from the database itself, so there is no problem with modifying the
      * contents of the list, or the values of the properties of these {@link DynaBean}s. However, it is the application's responsibility to persist any such
      * changes back to the database, if it so desires.
